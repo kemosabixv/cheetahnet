@@ -34,12 +34,12 @@ $(document).ready(function() {
         ],
         "createdRow": function(row, data, index) {
             // Check if the row is a group header row
-            console.log(row);
+            // console.log(row);
             if (data[1] !== "") {
                 // Add the "group-header-row" class to the row
                 $(row).addClass('bg-info-light');
             }
-            console.log($(row).attr('class'))
+            // console.log($(row).attr('class'))
         },
         "drawCallback": function(settings) {
             var api = this.api();
@@ -50,8 +50,8 @@ $(document).ready(function() {
             api.column(2, {
                 page: 'current'
             }).data().each(function(group, i) {
-                if (last !== grouPp) {
-                    console.log(group);
+                if (last !== group) {
+                    // console.log(group);
                     $(rows).eq(i).before(
                         '<tr><td>' + group + '</td></tr>'
                     );
@@ -72,7 +72,7 @@ $(document).ready(function() {
         table.ajax.reload(function() {
             // Set the current page after data has been reloaded
             table.page(currentPage).draw(false);
-            console.log(currentPage);
+            // console.log(currentPage);
         });
     }, 5000);
 

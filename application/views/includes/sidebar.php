@@ -66,12 +66,16 @@
       <li class="nav-item">
       <a class="nav-link collapsed" href="#">
           <i class="ri-radar-line"></i>
-          <span>Monitor:</span><span id="monitor-status"></span>
-        </a>
-        <button id="monitor-on" type="button" class="btn btn-success rounded-pill" >ON</button>
-        <button id="monitor-off" type="button" class="btn btn-danger rounded-pill" >OFF</button>
+          <span>Monitor:</span>
+          <span id="monitor-status">
+          </span>
+      </a>
+        
 
-      </li>
+      <li style="margin-left: 30px;">
+     <button id="monitor-on" type="button" class="btn btn-success rounded-pill">ON</button>
+     <button id="monitor-off" type="button" class="btn btn-danger rounded-pill">OFF</button>
+    </li>
     <!-- End Contact Page Nav -->
 
       

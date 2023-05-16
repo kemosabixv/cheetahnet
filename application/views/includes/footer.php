@@ -35,85 +35,96 @@
   <script src="assets/js/main.js"></script>
 
   <script>
-  // Make an AJAX call to the "monitor-status" route
-  $.ajax({
-    url: "monitor-status",
-    method: "GET",
-    success: function(response) {
-      // Update the element with the response
-      if (response == 'on') {
-        $('#monitor-status').html('<button type="button" class="btn btn-success rounded-pill">ON</button>');
-      } else if (response == 'off') {
-        $('#monitor-status').html('<button type="button" class="btn btn-danger rounded-pill">OFF</button>');
-      } else {
-        $('#monitor-status').html('<span class="badge rounded-pill bg-danger">ERROR</span>');
-      }
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-      // Handle any errors that occur during the AJAX request
-      console.error(textStatus, errorThrown);
-    }
-  });
+$(document).ready(function () {
+   // Start ping button
+   $('#monitor-on').click(function () {
+      showLoadingSweetAlert("Turning Monitor On...");
+      $.ajax({
+         url: "start-ping",
+         type: "GET",
+         success: function (response) {
+            console.log(response);
+            if (response === "Ping module started") {
+               showResultSweetAlert(response, "assets/img/successful_anim.gif");
+            }
+         },
+         error: function () {
+            showResultSweetAlert("<?php echo base_url();?>assets/img/error_anim.gif");
+         }
+      });
+   });
 
-  $(document).ready(function() {
-  // Start ping button
-  $('#monitor-on').click(function() {
-    showLoadingSweetAlert("Turning Monitor On...");
-    $.ajax({
-      url: "<?php echo base_url('start-ping') ?>",
-      type: "GET",
-      success: function() {
-        showResultSweetAlert("<?php echo base_url();?>assets/img/successful_anim.gif");
-      },
-      error: function() {
-        showResultSweetAlert("<?php echo base_url();?>assets/img/error_anim.gif");
-      }
-    });
-  });
+   // Stop ping button
+   $('#monitor-off').click(function () {
+      showLoadingSweetAlert("Turning Monitor Off...");
+      $.ajax({
+         url: "stop-ping",
+         type: "GET",
+         success: function (response) {
+            console.log(response);
+            if (response === "Ping module stopped") {
+               showResultSweetAlert(response, "<?php echo base_url();?>assets/img/successful_anim.gif");
+            }
+         },
+         error: function () {
+            showResultSweetAlert("<?php echo base_url();?>assets/img/error_anim.gif");
+         }
+      });
+   });
 
-  // Stop ping button
-  $('#monitor-off').click(function() {
-    showLoadingSweetAlert("Turning Monitor Off...");
-    $.ajax({
-      url: "<?php echo base_url('stop-ping') ?>",
-      type: "GET",
-      success: function() {
-        showResultSweetAlert("<?php echo base_url();?>assets/img/successful_anim.gif");
+   // Make an AJAX call to the "monitor-status" route
+   function updateMonitorStatus() {
+   $.ajax({
+      url: "monitor-status",
+      method: "GET",
+      success: function (response) {
+         console.log(response);
+         if (response === "true") {
+            $('#monitor-status').html('<span class="badge bg-success">Running</span>');
+         } else if (response === "false") {
+            $('#monitor-status').html('<span class="badge bg-danger">Not Running</span>');
+         } else {
+            $('#monitor-status').html('<span class="badge bg-danger">Error</span>');
+         }
       },
-      error: function() {
-        showResultSweetAlert("<?php echo base_url();?>assets/img/error_anim.gif");
+      error: function (jqXHR, textStatus, errorThrown) {
+         console.error(textStatus, errorThrown);
       }
-    });
-  });
+   });
+}
+
+
+   updateMonitorStatus(); // Call the function to update the monitor status initially
 });
 
 
 function showLoadingSweetAlert(title) {
-    Swal.fire({
-        text: title,
-        imageUrl: "assets/img/loading_anim.gif",
-        imageWidth: 100,
-        imageHeight: 100,
-        showCancelButton: false,
-        showConfirmButton: false
-    });
+  Swal.fire({
+    text: title,
+    imageUrl: "assets/img/loading_anim.gif",
+    imageWidth: 100,
+    imageHeight: 100,
+    showCancelButton: false,
+    showConfirmButton: false
+  });
 }
 
 function showResultSweetAlert(title, url) {
-    Swal.fire({
-        text: title,
-        imageUrl: url,
-        imageWidth: 100,
-        imageHeight: 100,
-        showCancelButton: false,
-        showConfirmButton: true,
-        customClass: {
-            icon: 'no-border'
-        }
-    }).then((result) => {
-        location.reload();
-    });
+  Swal.fire({
+    text: title,
+    imageUrl: url,
+    imageWidth: 100,
+    imageHeight: 100,
+    showCancelButton: false,
+    showConfirmButton: true,
+    customClass: {
+      icon: 'no-border'
+    }
+  }).then((result) => {
+    location.reload();
+  });
 }
+
 </script>
 
 
