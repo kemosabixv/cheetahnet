@@ -25,7 +25,7 @@
           <th scope="col">Mast Name</th>
           <th scope="col">Location</th>
           <th scope="col">Connected Via</th>
-          <th scope="col">Connected From</th>  
+          <th scope="col">Connected From</th>
           <th scope="col">Date Created</th>
         </tr>
       </thead>
@@ -36,7 +36,7 @@
           <th scope="col">Mast Name</th>
           <th scope="col">Location</th>
           <th scope="col">Connected Via</th>
-          <th scope="col">Connected From</th>  
+          <th scope="col">Connected From</th>
           <th scope="col">Date Created</th>
         </tr>
       </tfoot>
@@ -59,24 +59,21 @@
             <input type="text" name="mast_name" id="mast_name" class="form-control" placeholder="Mast Name">
           </div>
           <div class="col-md-12">
-            <input type="text" name="mast_location" id="mast_location" class="form-control" placeholder="Mast Location (Lat. , Long.)"> 
+            <input type="text" name="mast_location" id="mast_location" class="form-control" placeholder="Mast Location (Lat. , Long.)">
           </div>
-
           <div class="col-md-12">
-                  <select name="mast_connected_via" id="mast_connected_via" class="form-select" placeholder="">
-                    <option>Radio</option>
-                    <option>Fiber</option>
-                  </select>
-                </div>
-
+            <select name="mast_connected_via" id="mast_connected_via" class="form-select" placeholder="">
+              <option>Radio</option>
+              <option>Fiber</option>
+            </select>
+          </div>
           <div class="mb-1">
-                                <label class="form-label" for="basicSelect">Connected From</label>
-                                <select class="form-select" id="mast_connected_from" name="mast_connected_from">
-                                  <option>Choose Mast</option>
-                                  <?php foreach($all_masts as $each){ ?> <option value="<?php echo $each->mastid; ?>"> <?php echo $each->mast_name;?> </option>'; <?php } ?> 
-                                </select>
-            </div>
-
+            <label class="form-label" for="basicSelect">Connected From</label>
+            <select class="form-select" id="mast_connected_from" name="mast_connected_from">
+              <option>Choose Mast</option> <?php foreach($all_masts as $each){ ?> <option value="
+												<?php echo $each->mastid; ?>"> <?php echo $each->mast_name;?> </option>'; <?php } ?>
+            </select>
+          </div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary">Save</button>
             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -84,10 +81,7 @@
         </form>
         <!-- End No Labels Form -->
       </div>
-      <!-- <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div> -->
+      <!-- <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-primary">Save changes</button></div> -->
     </div>
   </div>
 </div>

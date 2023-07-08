@@ -10,20 +10,10 @@
       </nav>
     </div><!-- End Page Title -->
 
-  
-    <section class="section">
-      <div class="row">
-        <div class="col-12">
+      
+              <section id="topology-container"></section>
+            
 
-          <div class="card">
-            <div class="card-body">
-            <div id="topology-container"></div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </section>
 
 
    

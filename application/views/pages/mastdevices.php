@@ -15,37 +15,30 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">Mast Devices</h5>
+   
     <!-- Table with hoverable rows -->
     <table class="table" id="mastdevices" style="width:100%">
-                <thead>
-                  <tr>
-                    <th scope="col">Device ID</th>
-                    <th scope="col">Device Name</th>
-                    <th scope="col">Mast</th>
-                    <th scope="col">Wireless Mode</th>
-                    <th scope="col">IP address</th>
-                    <th scope="col">Connected From</th>
-                    <th scope="col">Connection  Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              
-                <tfoot>
-                  <tr>
-                    <th scope="col">Device ID</th>
-                    <th scope="col">Device Name</th>
-                    <th scope="col">Mast</th>
-                    <th scope="col">Wireless Mode</th>
-                    <th scope="col">IP address</th>
-                    <th scope="col">Connected From</th>
-                    <th scope="col">Connection  Status</th>
-                  </tr>
-                </tfoot>
+      <!-- Table headers -->
+      <thead>
+        <tr>
+          <th scope="col">Device ID</th>
+          <th scope="col">Device Name</th>
+          <th scope="col">Mast</th>
+          <th scope="col">Radio Mode</th>
+          <th scope="col">IP address</th>
+          <th scope="col">Connected From</th>
+          <th scope="col">Connection  Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table rows will be dynamically added here -->
+      </tbody>
+      
     </table>
     <!-- End Table with hoverable rows -->
   </div>
 </div>
+
 
 </div>
 <!-- End Basic Modal-->
