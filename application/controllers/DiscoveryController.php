@@ -169,11 +169,6 @@ class DiscoveryController extends CI_Controller
     {
         // Get the data from the form data
         $rowData = json_decode($this->input->post("rowData"), true);
-        // $rowData = [
-        //     "device_name" => "Patrick Mugo 0700538015",
-        //     "ip_address" => "192.168.17.207",
-        //     "mastid" => "3",
-        // ];
         
         // Get the row data from the database
         $dbdevicedata = $this->discovery_model->getDiscoveryDataForInsertion($rowData);

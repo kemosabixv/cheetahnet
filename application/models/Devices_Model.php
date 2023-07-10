@@ -2,6 +2,7 @@
 
 class Devices_Model extends CI_Model
 {
+    //TODO: add logic to use history tables
     public function getAllMasts()
     {
         $query = $this->db->get("tbl_masts");

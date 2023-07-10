@@ -6,9 +6,9 @@ class DashboardController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        if ($this->session->userdata("logged_in") !== true) {
-            redirect("welcome");
-        }
+        // if ($this->session->userdata("logged_in") !== true) {
+        //     redirect("welcome");
+        // }
         $this->load->model("Devices_Model", "devices_model");
         $this->load->model("Dashboard_Model", "dashboard_model");
         $this->load->library("africastalking");
@@ -41,23 +41,27 @@ class DashboardController extends CI_Controller
     public function getallstations()
     {
         $all_stations = $this->dashboard_model->getallstations();
+        // echo $all_stations;
+        $data = ["data" => $all_stations];
         return $this->output
             ->set_content_type("application/json")
-            ->set_output(json_encode($all_stations));
+            ->set_output(json_encode($data));
     }
     public function getallAPs()
     {
-        $all_stations = $this->dashboard_model->getallAPs();
+        $all_aps = $this->dashboard_model->getallAPs();
+        $data = ["data" => $all_aps];
         return $this->output
             ->set_content_type("application/json")
-            ->set_output(json_encode($all_stations));
+            ->set_output(json_encode($data));
     }
     public function getalldevices()
     {
         $all_devices = $this->dashboard_model->getalldevices();
+        $data = ["data" => $all_devices];
         return $this->output
             ->set_content_type("application/json")
-            ->set_output(json_encode($all_devices));
+            ->set_output(json_encode($data));
     }
     public function get_recent_disconnections()
     {
@@ -101,5 +105,12 @@ class DashboardController extends CI_Controller
     {
         $recent_activity_items = $this->dashboard_model->get_recent_activity_items();
         return $recent_activity_items;
+    }
+    public function get_connection_status_history()
+    {
+        $connection_status_history = $this->dashboard_model->get_connection_status_history();
+        return $this->output
+        ->set_content_type("application/json")
+        ->set_output(json_encode($connection_status_history));
     }
 }

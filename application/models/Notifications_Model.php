@@ -42,4 +42,21 @@ class Notifications_Model extends CI_Model
         $result = $query->result();
         return $result;
     }
+    public function update_seen($selectedRows)
+    {
+        $this->db->set("seen", 1);
+        $this->db->where_in("id", $selectedRows);
+        $this->db->update("tbl_notifications"); 
+        if ($this->db->affected_rows() > 0) {
+            return $response = [
+                "error" => 0,
+                "message" => "Success",
+            ];
+        } else {
+            return $response = [
+                "error" => 1,
+                "message" => "Error",
+            ];
+        }
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-
+//TODO: add logic to use history tables
 class Discovery_Model extends CI_Model
 {
     public function get_interface()

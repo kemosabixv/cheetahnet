@@ -1,49 +1,871 @@
 <script>
    document.addEventListener("DOMContentLoaded", () => {
-
-      //Stations Card
-      var stations_current = document.getElementById("stations-current");
+      //current stations count and history
+      var current_stations_count;
+      var stations_history;
       $.ajax({
          url: "<?php echo base_url('getallstations'); ?>",
          type: "GET",
+         async: false,
          success: function(response) {
             console.log(response);
-            stations_current.innerHTML = response;
+            current_stations_count = response.data.current_station_count[0].station_count;
+            stations_history = response.data.station_history;
+            console.log(stations_history); 
          },
          error: function() {
-            console.error("Error fetching data for stations");
+            console.error("Error fetching data for Total Devices");
          }
       });
-
-      //APs Card
-      var aps_current = document.getElementById("aps-current");
+      //current aps count and history
+      var current_aps_count;
+      var aps_history;
       $.ajax({
          url: "<?php echo base_url('getallAPs'); ?>",
          type: "GET",
+         async: false,
          success: function(response) {
             console.log(response);
-            aps_current.innerHTML = response;
+            current_aps_count = response.data.current_ap_count[0].ap_count;
+            console.log(current_aps_count);
+            aps_history = response.data.ap_history;
+            console.log(aps_history); 
          },
          error: function() {
-            console.error("Error fetching data for APs");
+            console.error("Error fetching data for Total Devices");
          }
       });
-
-      //Total Devices Card
-      var total_devices_current = document.getElementById("total-devices-current");
+      //current total devices count and history
+      var current_total_devices_count;
+      var total_devices_history;
       $.ajax({
          url: "<?php echo base_url('getalldevices'); ?>",
          type: "GET",
+         async: false,
          success: function(response) {
             console.log(response);
-            total_devices_current.innerHTML = response;
+            current_total_devices_count = response.data.total_current_count[0].total_count;
+            console.log(current_total_devices_count);
+            total_devices_history = response.data.total_count_history;
+            console.log(total_devices_history); 
          },
          error: function() {
             console.error("Error fetching data for Total Devices");
          }
       });
 
-      //recent_activity_items card
+
+//Stations Card
+      $('#stations_current').html(current_stations_count);
+
+      // handler to the 'stations_filter_today' button
+      $('#stations_filter_today').click(function(e) {
+      e.preventDefault();
+      $('#stations_current').html(current_stations_count);
+      $('#stations_filter_display').text("| Today");
+      $('#stations_difference').html('');
+      $('#stations_difference_type').html('');
+      });
+      
+
+      // handler to the 'stations_filter_yesterday' button
+      $('#stations_filter_yesterday').click(function(e) {
+      e.preventDefault();
+      $('#stations_filter_display').text("| Yesterday");
+
+      var station_count_yesterday = null;
+      var station_value_yesterday = null;
+      var mostRecentEntry = null;
+
+      var currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+      var mostRecentEntry = null;
+      
+      for (var i = 0; i < stations_history.length; i++) {
+      var entry = stations_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to today
+      if (entryDate.getTime() !== currentDate.getTime()) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      station_count_yesterday = mostRecentEntry.station_count;
+      station_count_yesterday_display = mostRecentEntry.station_count;
+
+      if (station_count_yesterday !== null) {
+      // Calculate the percentage difference between current_stations_count and station_count_yesterday
+      var difference = current_stations_count - station_count_yesterday;
+      percent_difference = Math.abs((difference / station_count_yesterday) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         station_value_yesterday = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         station_value_yesterday = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         station_value_yesterday = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#stations_difference').html(station_value_yesterday);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#stations_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+      
+      } else {
+         station_value_yesterday = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#stations_current').html(current_stations_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + station_count_yesterday_display + '</span>');
+      });
+      //End  handler to the 'stations_filter_today' button
+
+
+      // handler to the 'stations_filter_lastweek' button
+      $('#stations_filter_lastweek').click(function(e) {
+      e.preventDefault();
+      $('#stations_filter_display').text("| Last Week");
+      var station_count_lastweek = null;
+      var station_value_lastweek = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentWeekNumber = today.getWeek();
+      console.log(currentWeekNumber);
+      
+      for (var i = 0; i < stations_history.length; i++) {
+      var entry = stations_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getWeek() !== currentDate.getWeek()) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+      
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      station_count_lastweek = mostRecentEntry.station_count;
+      station_count_lastweek_display = mostRecentEntry.station_count;
+
+      if (station_count_lastweek !== null) {
+      // Calculate the percentage difference between current_stations_count and station_count_yesterday
+      var difference = current_stations_count - station_count_lastweek;
+      percent_difference = Math.abs((difference / station_count_lastweek) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         station_value_lastweek = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         station_value_lastweek = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         station_value_lastweek = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#stations_difference').html(station_value_lastweek);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#stations_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+      
+      } else {
+         station_value_lastweek = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#stations_current').html(current_stations_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + station_count_lastweek_display + '</span>');
+      });
+      // End handler to the 'stations_filter_lastweek' button
+
+      // handler to the 'stations_filter_lastmonth' button
+      $('#stations_filter_lastmonth').click(function(e) {
+      e.preventDefault();
+      $('#stations_filter_display').text("| Last Month");
+      var station_count_lastmonth = null;
+      var station_value_lastmonth = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentMonthNumber = today.getMonth();
+      console.log(currentMonthNumber);
+
+      for (var i = 0; i < stations_history.length; i++) {
+      var entry = stations_history[i];
+      var entryDate = new Date(entry.date_created);
+
+        // Check if the entry date is not equal to this week
+        if (entryDate.getMonth() !== currentMonthNumber) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+       // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      station_count_lastmonth = mostRecentEntry.station_count;
+      station_count_lastmonth_display = mostRecentEntry.station_count;
+
+      if (station_count_lastmonth !== null) {
+      // Calculate the percentage difference between current_stations_count and station_count_yesterday
+      var difference = current_stations_count - station_count_lastmonth;
+      percent_difference = Math.abs((difference / station_count_lastmonth) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         station_value_lastmonth = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         station_value_lastmonth = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         station_value_lastmonth = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#stations_difference').html(station_value_lastmonth);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#stations_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+      
+      } else {
+         station_value_lastmonth = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#stations_current').html(current_stations_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + station_count_lastmonth_display + '</span>');
+      });
+      // End handler to the 'stations_filter_lastmonth' button
+
+      // handler to the 'stations_filter_lastyear' button
+      $('#stations_filter_lastyear').click(function(e) {
+      e.preventDefault();
+      $('#stations_filter_display').text("| Last Year");
+      var station_count_lastyear = null;
+      var station_value_lastyear = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentYearNumber = today.getFullYear();
+      console.log(currentYearNumber);
+
+      for (var i = 0; i < stations_history.length; i++) {
+      var entry = stations_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getFullYear() !== currentYearNumber) {
+      if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+         mostRecentEntry = entry;
+            }
+         }
+      }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to this year
+      console.log(mostRecentEntry);
+      station_count_lastyear = mostRecentEntry.station_count;
+      station_count_lastyear_display = mostRecentEntry.station_count;
+
+      if (station_count_lastyear !== null) {
+      // Calculate the percentage difference between current_stations_count and station_count_yesterday
+      var difference = current_stations_count - station_count_lastyear;
+      percent_difference = Math.abs((difference / station_count_lastyear) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         station_value_lastyear = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         station_value_lastyear = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         station_value_lastyear = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+      console.log(station_value_lastyear);
+      $('#stations_difference').html(station_value_lastyear);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#stations_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+      
+      } else {
+         station_value_lastyear = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#stations_current').html(current_stations_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + station_count_lastyear_display + '</span>');
+      });
+      // End handler to the 'stations_filter_lastyear' button
+//End Stations Card
+
+//APs Card
+      $('#aps_current').html(current_aps_count);
+
+      // handler to the 'aps_filter_today' button
+      $('#aps_filter_today').click(function(e) {
+      e.preventDefault();
+      $('#aps_current').html(current_aps_count);
+      $('#aps_filter_display').text("| Today");
+      $('#aps_difference').html('');
+      $('#aps_difference_type').html('');
+      });
+
+
+      // handler to the 'aps_filter_yesterday' button
+      $('#aps_filter_yesterday').click(function(e) {
+      e.preventDefault();
+      $('#aps_filter_display').text("| Yesterday");
+
+      var aps_count_yesterday = null;
+      var aps_value_yesterday = null;
+      var mostRecentEntry = null;
+
+      var currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+      var mostRecentEntry = null;
+
+      for (var i = 0; i < aps_history.length; i++) {
+      var entry = aps_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to today
+      if (entryDate.getTime() !== currentDate.getTime()) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      aps_count_yesterday = mostRecentEntry.ap_count;
+      aps_count_yesterday_display = mostRecentEntry.ap_count;
+
+      if (aps_count_yesterday !== null) {
+      // Calculate the percentage difference between current_stations_count and station_count_yesterday
+      var difference = current_aps_count - aps_count_yesterday;
+      percent_difference = Math.abs((difference / aps_count_yesterday) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         aps_value_yesterday = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         aps_value_yesterday = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         aps_value_yesterday = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#aps_difference').html(aps_value_yesterday);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#aps_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         aps_value_yesterday = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#aps_current').html(current_aps_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + aps_count_yesterday_display + '</span>');
+      });
+      //End  handler to the 'aps_filter_yesterday' button
+
+
+      // handler to the 'aps_filter_lastweek' button
+      $('#aps_filter_lastweek').click(function(e) {
+      e.preventDefault();
+      $('#aps_filter_display').text("| Last Week");
+      var aps_count_lastweek = null;
+      var aps_value_lastweek = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentWeekNumber = today.getWeek();
+      console.log(currentWeekNumber);
+
+      for (var i = 0; i < aps_history.length; i++) {
+      var entry = aps_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getWeek() !== currentDate.getWeek()) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      aps_count_lastweek = mostRecentEntry.ap_count;
+      aps_count_lastweek_display = mostRecentEntry.ap_count;
+
+      if (aps_count_lastweek !== null) {
+      // Calculate the percentage difference between current_aps_count and ap_count_yesterday
+      var difference = current_aps_count - aps_count_lastweek;
+      percent_difference = Math.abs((difference / aps_count_lastweek) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         aps_count_lastweek = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         aps_count_lastweek = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         aps_count_lastweek = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#aps_difference').html(aps_count_lastweek);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#aps_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         aps_count_lastweek = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#aps_current').html(current_aps_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + aps_count_lastweek_display + '</span>');
+      });
+      // End handler to the 'aps_filter_lastweek' button
+
+      // handler to the 'aps_filter_lastmonth' button
+      $('#aps_filter_lastmonth').click(function(e) {
+      e.preventDefault();
+      $('#aps_filter_display').text("| Last Month");
+      var aps_count_lastmonth = null;
+      var aps_value_lastmonth = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentMonthNumber = today.getMonth();
+      console.log(currentMonthNumber);
+
+      for (var i = 0; i < aps_history.length; i++) {
+      var entry = aps_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getMonth() !== currentMonthNumber) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      aps_count_lastmonth = mostRecentEntry.ap_count;
+      aps_count_lastmonth_display = mostRecentEntry.ap_count;
+
+      if (aps_count_lastmonth !== null) {
+      // Calculate the percentage difference between current_aps_count and ap_count_yesterday
+      var difference = current_aps_count - aps_count_lastmonth;
+      percent_difference = Math.abs((difference / aps_count_lastmonth) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         aps_value_lastmonth = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         aps_value_lastmonth = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         aps_value_lastmonth = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#aps_difference').html(aps_value_lastmonth);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#aps_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         aps_value_lastmonth = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#aps_current').html(current_aps_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + aps_count_lastmonth_display + '</span>');
+      });
+      // End handler to the 'aps_filter_lastmonth' button
+
+      // handler to the 'aps_filter_lastyear' button
+      $('#aps_filter_lastyear').click(function(e) {
+      e.preventDefault();
+      $('#aps_filter_display').text("| Last Year");
+      var aps_count_lastyear = null;
+      var aps_value_lastyear = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentYearNumber = today.getFullYear();
+      console.log(currentYearNumber);
+
+      for (var i = 0; i < aps_history.length; i++) {
+      var entry = aps_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getFullYear() !== currentYearNumber) {
+      if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+         mostRecentEntry = entry;
+            }
+         }
+      }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to this year
+      console.log(mostRecentEntry);
+      aps_count_lastyear = mostRecentEntry.ap_count;
+      aps_count_lastyear_display = mostRecentEntry.ap_count;
+
+      if (aps_count_lastyear !== null) {
+      // Calculate the percentage difference between aps_stations_count and ap_count_yesterday
+      var difference = current_aps_count - aps_count_lastyear;
+      percent_difference = Math.abs((difference / aps_count_lastyear) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         aps_value_lastyear = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         aps_value_lastyear = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         aps_value_lastyear = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+      console.log(aps_value_lastyear);
+      $('#aps_difference').html(aps_value_lastyear);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#aps_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         aps_value_lastyear = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#aps_current').html(current_aps_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + aps_count_lastyear_display + '</span>');
+      });
+      // End handler to the 'aps_filter_lastyear' button
+//End APs Card 
+
+
+
+
+//Total Devices Card
+      $('#total_devices_current').html(current_total_devices_count);
+
+      // handler to the 'aps_filter_today' button
+      $('#total_devices_filter_today').click(function(e) {
+      e.preventDefault();
+      $('#total_devices_current').html(current_total_devices_count);
+      $('#total_devices_filter_display').text("| Today");
+      $('#total_devices_difference').html('');
+      $('#total_devices_difference_type').html('');
+      });
+
+
+      // handler to the 'total_devices_filter_yesterday' button
+      $('#total_devices_filter_yesterday').click(function(e) {
+      e.preventDefault();
+      $('#total_devices_filter_display').text("| Yesterday");
+
+      var total_devices_count_yesterday = null;
+      var total_devices_value_yesterday = null;
+      var mostRecentEntry = null;
+
+      var currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+      var mostRecentEntry = null;
+
+      for (var i = 0; i < total_devices_history.length; i++) {
+      var entry = total_devices_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to today
+      if (entryDate.getTime() !== currentDate.getTime()) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      total_devices_count_yesterday = mostRecentEntry.total_count;
+      total_devices_count_yesterday_display = mostRecentEntry.total_count;
+
+      if (total_devices_count_yesterday !== null) {
+      // Calculate the percentage difference between current_stations_count and station_count_yesterday
+      var difference = current_total_devices_count - total_devices_count_yesterday;
+      percent_difference = Math.abs((difference / total_devices_count_yesterday) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         total_devices_value_yesterday = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         total_devices_value_yesterday = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         total_devices_value_yesterday = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#total_devices_difference').html(total_devices_value_yesterday);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#total_devices_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         total_devices_value_yesterday = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#total_devices_current').html(current_total_devices_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + total_devices_count_yesterday_display + '</span>');
+      });
+      //End  handler to the 'total_devices_filter_yesterday' button
+
+
+      // handler to the 'total_devices_filter_lastweek' button
+      $('#total_devices_filter_lastweek').click(function(e) {
+      e.preventDefault();
+      $('#total_devices_filter_display').text("| Last Week");
+      var total_devices_count_lastweek = null;
+      var total_devices_value_lastweek = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentWeekNumber = today.getWeek();
+      console.log(currentWeekNumber);
+
+      for (var i = 0; i < total_devices_history.length; i++) {
+      var entry = total_devices_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getWeek() !== currentDate.getWeek()) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      total_devices_count_lastweek = mostRecentEntry.total_count;
+      total_devices_count_lastweek_display = mostRecentEntry.total_count;
+
+      if (total_devices_count_lastweek !== null) {
+      // Calculate the percentage difference between current_total_devices_count and total_count_yesterday
+      var difference = current_total_devices_count - total_devices_count_lastweek;
+      percent_difference = Math.abs((difference / total_devices_count_lastweek) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         total_devices_count_lastweek = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         total_devices_count_lastweek = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         total_devices_count_lastweek = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#total_devices_difference').html(total_devices_count_lastweek);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#total_devices_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         total_devices_count_lastweek = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#total_devices_current').html(current_total_devices_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + total_devices_count_lastweek_display + '</span>');
+      });
+      // End handler to the 'total_devices_filter_lastweek' button
+
+      // handler to the 'aps_filter_lastmonth' button
+      $('#total_devices_filter_lastmonth').click(function(e) {
+      e.preventDefault();
+      $('#total_devices_filter_display').text("| Last Month");
+      var total_devices_count_lastmonth = null;
+      var total_devices_value_lastmonth = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentMonthNumber = today.getMonth();
+      console.log(currentMonthNumber);
+
+      for (var i = 0; i < total_devices_history.length; i++) {
+      var entry = total_devices_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getMonth() !== currentMonthNumber) {
+         if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+            mostRecentEntry = entry;
+               }
+            }
+         }
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to today
+      console.log(mostRecentEntry);
+      total_devices_count_lastmonth = mostRecentEntry.total_count;
+      total_devices_count_lastmonth_display = mostRecentEntry.total_count;
+
+      if (total_devices_count_lastmonth !== null) {
+      // Calculate the percentage difference between current_total_devices_count and total_count_yesterday
+      var difference = current_total_devices_count - total_devices_count_lastmonth;
+      percent_difference = Math.abs((difference / total_devices_count_lastmonth) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         total_devices_value_lastmonth = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         total_devices_value_lastmonth = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         total_devices_value_lastmonth = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+
+      $('#total_devices_difference').html(total_devices_value_lastmonth);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#total_devices_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         total_devices_value_lastmonth = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#total_devices_current').html(current_total_devices_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + total_devices_count_lastmonth_display + '</span>');
+      });
+      // End handler to the 'total_devices_filter_lastmonth' button
+
+      // handler to the 'total_devices_filter_lastyear' button
+      $('#total_devices_filter_lastyear').click(function(e) {
+      e.preventDefault();
+      $('#total_devices_filter_display').text("| Last Year");
+      var total_devices_count_lastyear = null;
+      var total_devices_value_lastyear = null;
+      var mostRecentEntry = null;
+      var today = new Date();
+      var currentYearNumber = today.getFullYear();
+      console.log(currentYearNumber);
+
+      for (var i = 0; i < total_devices_history.length; i++) {
+      var entry = total_devices_history[i];
+      var entryDate = new Date(entry.date_created);
+
+      // Check if the entry date is not equal to this week
+      if (entryDate.getFullYear() !== currentYearNumber) {
+      if (!mostRecentEntry || entryDate > mostRecentEntry.date_created) {
+         mostRecentEntry = entry;
+            }
+         }
+      }
+
+      // The `mostRecentEntry` variable now holds the most recent entry that is not equal to this year
+      console.log(mostRecentEntry);
+      total_devices_count_lastyear = mostRecentEntry.total_count;
+      total_devices_count_lastyear_display = mostRecentEntry.total_count;
+
+      if (total_devices_count_lastyear !== null) {
+      // Calculate the percentage difference between aps_stations_count and total_count_yesterday
+      var difference = current_total_devices_count - total_devices_count_lastyear;
+      percent_difference = Math.abs((difference / total_devices_count_lastyear) * 100).toFixed(0);
+      console.log(difference);
+      console.log(percent_difference);
+      if (difference > 0) {
+         total_devices_value_lastyear = '<span class="text-success small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else if (difference < 0) {
+         total_devices_value_lastyear = '<span class="text-danger small pt-1 fw-bold">' + percent_difference + '%</span>';
+      } else {
+         total_devices_value_lastyear = '<span class="text-muted small pt-1 fw-bold">No Change</span>';
+      }
+      console.log(total_devices_value_lastyear);
+      $('#total_devices_difference').html(total_devices_value_lastyear);
+
+      // Determine the difference type
+      difference_type = (difference > 0) ? '<span class="text-muted small pt-2 ps-1">increase</span>' : (difference < 0) ? '<span class="text-muted small pt-2 ps-1">decrease</span>' : '';
+      $('#total_devices_difference_type').html(difference_type);
+      // Display the previous day's station count and percentage difference
+
+      } else {
+         total_devices_value_lastyear = 'N/A';
+      }
+      // Update the HTML with the station count and difference
+      $('#total_devices_current').html(current_total_devices_count + '<span style="color: #899bbd; font-size: 24px; font-weight: 200;"> | ' + total_devices_count_lastyear_display + '</span>');
+      });
+      // End handler to the 'aps_filter_lastyear' button
+//End Total Devices Card
+      
+
+//Reports Card
+      $.ajax({
+         url: 'get_connection_status_history', // Replace with the actual URL of your server endpoint
+         type: 'GET',
+         success: function(response) {
+            var offlineData = response.data.map(function(entry) {
+                  return parseInt(entry.offlne_count);
+            });
+
+            var onlineData = response.data.map(function(entry) {
+                  return parseInt(entry.online_count);
+            });
+
+            var chartData = response.data.map(function(entry) {
+                  return entry.date_created;
+            });
+
+            var chart = new ApexCharts(document.querySelector('#reportsChart'), {
+                  series: [{
+                     name: 'Offline',
+                     data: offlineData,
+                  }, {
+                     name: 'Online',
+                     data: onlineData,
+                  }],
+                  chart: {
+                     height: 350,
+                     type: 'area',
+                     toolbar: {
+                        show: false
+                     },
+                  },
+                  markers: {
+                     size: 4
+                  },
+                  colors: ['#4154f1', '#2eca6a', '#ff771d'],
+                  fill: {
+                     type: "gradient",
+                     gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.3,
+                        opacityTo: 0.4,
+                        stops: [0, 90, 100]
+                     }
+                  },
+                  dataLabels: {
+                     enabled: false
+                  },
+                  stroke: {
+                     curve: 'smooth',
+                     width: 2
+                  },
+                  xaxis: {
+                     type: 'datetime',
+                     categories: chartData,
+                  },
+                  tooltip: {
+                     x: {
+                        format: 'yyyy-MM-dd HH:mm:ss'
+                     },
+                  }
+            });
+
+            chart.render();
+         },
+         error: function() {
+            console.error('Error fetching chart data.');
+         }
+      });
+                  
+//End Reports Card
+
+
+
+//recent_activity_items card
       $.ajax({
          url: "<?php echo base_url('get_recent_activity_items'); ?>",
          type: "GET",
@@ -152,8 +974,7 @@
             {
                "data": "ip",
                "render": function(data, type, row, meta) {
-                  var singleDeviceRoute = "<?php echo base_url("
-                  devices / device / "); ?>" + data;
+                  var singleDeviceRoute = "<?php echo base_url("devices/device/"); ?>" + data;
                   let ahref = '<a href="' + singleDeviceRoute + '" target="_blank">' + data + '</a>';
                   return ahref;
                }
@@ -213,8 +1034,7 @@
             {
                "data": "ipaddress",
                "render": function(data, type, row, meta) {
-                  var singleDeviceRoute = "<?php echo base_url("
-                  devices / device / "); ?>" + data;
+                  var singleDeviceRoute = "<?php echo base_url("devices/device/"); ?>" + data;
                   let ahref = '<a href="' + singleDeviceRoute + '" target="_blank">' + data + '</a>';
                   return ahref;
                }
@@ -236,11 +1056,8 @@
       });
       //End of connections_per_ap_table datatable
 
-
-
-
-      //Mast Group Chart                  
-      var chart = echarts.init(document.getElementById("MastGroupChart"));
+      //Device Group Chart                  
+      var device_group_chart = echarts.init(document.getElementById("MastGroupChart"));
       // Configure the chart options
       var options = {
          tooltip: {
@@ -277,7 +1094,7 @@
       };
 
       // Set the chart options
-      chart.setOption(options);
+      device_group_chart.setOption(options);
       // Make an AJAX request to fetch the data for the chart
       $.ajax({
          url: "<?php echo base_url('getmastdevicescount'); ?>",
@@ -296,7 +1113,7 @@
             options.series[0].data = chartData;
 
             // Update the chart with the new data
-            chart.setOption(options);
+            device_group_chart.setOption(options);
 
          },
          error: function() {
@@ -315,6 +1132,14 @@ function formatDate(date) {
 
    return year + '-' + month + '-' + day;
 }
+
+Date.prototype.getWeek = function() {
+  var onejan = new Date(this.getFullYear(),0,1);
+  var today = new Date(this.getFullYear(),this.getMonth(),this.getDate());
+  var dayOfYear = ((today - onejan + 86400000)/86400000);
+  return Math.ceil(dayOfYear/7)
+};
+
 
 function calculateTimeAgo(timestamp) {
    var currentDate = new Date(); // Current date/time

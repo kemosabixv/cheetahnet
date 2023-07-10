@@ -24,31 +24,97 @@
     }
     public function getallstations()
     {
-        $wireless_mode = "Station";
-        $this->db->where("wireless_mode", $wireless_mode);
-        $this->db->from("tbl_devices");
+        $this->db->select('station_count, date_created');
+        $this->db->from('tbl_device_count_history');
+        $this->db->order_by('date_created', 'DESC');
+        $station_history = $this->db->get();
+        
+        $station_current_count = 0;
+        $wireless_mode = 'Station';
+        $this->db->select('wireless_mode');
+        $this->db->from('tbl_devices');
+        $this->db->where('wireless_mode', $wireless_mode);
         $query = $this->db->get();
-        $total = $query->num_rows();
-        return $total;
+        $station_current_count = $query->num_rows();
+    
+        $data = [
+            "station_history" => [],
+            "current_station_count" => []
+        ];
+        
+        foreach ($station_history->result() as $row) {
+            $sub_array = [];
+            $sub_array['station_count'] = $row->station_count;
+            $sub_array['date_created'] = $row->date_created;
+            $data['station_history'][] = $sub_array;
+        }
+        $data['current_station_count'][] =
+        ['station_count' => $station_current_count]
+        ;
+        return $data;
     }
+    
 
     public function getallAPs()
     {
-        $wireless_mode = "AP";
-        $this->db->where("wireless_mode", $wireless_mode);
-        $this->db->from("tbl_devices");
+        $this->db->select('ap_count, date_created');
+        $this->db->from('tbl_device_count_history');
+        $this->db->order_by('date_created', 'DESC');
+        $ap_history = $this->db->get();
+        
+        $ap_current_count = 0;
+        $wireless_mode = 'AP';
+        $this->db->select('wireless_mode');
+        $this->db->from('tbl_devices');
+        $this->db->where('wireless_mode', $wireless_mode);
         $query = $this->db->get();
-        $total = $query->num_rows();
-        return $total;
+        $ap_current_count = $query->num_rows();
+    
+        $data = [
+            "ap_history" => [],
+            "current_ap_count" => []
+        ];
+        
+        foreach ($ap_history->result() as $row) {
+            $sub_array = [];
+            $sub_array['ap_count'] = $row->ap_count;
+            $sub_array['date_created'] = $row->date_created;
+            $data['ap_history'][] = $sub_array;
+        }
+        $data['current_ap_count'][] =
+        ['ap_count' => $ap_current_count]
+        ;
+        return $data;
     }
 
     public function getalldevices()
     {
-        $this->db->from("tbl_devices");
-        $query = $this->db->get();
-        $total = $query->num_rows();
-        return $total;
+        $this->db->select('total_count, date_created');
+        $this->db->from('tbl_device_count_history');
+        $this->db->order_by('date_created', 'DESC');
+        $total_count_history = $this->db->get();
+        
+        $total_current_count = 0;
+        $query = $this->db->get('tbl_devices');
+        $total_current_count = $query->num_rows();
+
+        $data = [
+            "total_count_history" => [],
+            "total_current_count" => []
+        ];
+        
+        foreach ($total_count_history->result() as $row) {
+            $sub_array = [];
+            $sub_array['total_count'] = $row->total_count;
+            $sub_array['date_created'] = $row->date_created;
+            $data['total_count_history'][] = $sub_array;
+        }
+        $data['total_current_count'][] =
+        ['total_count' => $total_current_count]
+        ;
+        return $data;
     }
+
 
     public function get_recent_disconnections()
     {
@@ -151,5 +217,29 @@
         header("Content-Type: application/json");
         // var_dump($output);
         echo json_encode($output);
+    }
+    public function get_connection_status_history()
+    {
+        $this->db->from("tbl_connection_status_history");
+        $this->db->order_by("date_created", "DESC");
+        $this->db->limit(46);
+        $query = $this->db->get();
+        $data = [];
+
+        foreach($query->result() as $row){
+            $sub_array = [];
+            $sub_array["offlne_count"] = $row->offlne_count;
+            $sub_array["online_count"] = $row->online_count;
+            $sub_array["date_created"] = $row->date_created;
+            // $sub_array["id"] = $row->id;
+            $data[] = $sub_array;
+        }
+
+        $output = [
+            "data" => $data,
+        ];
+
+        header("Content-Type: application/json");
+        return $output;
     }
 }

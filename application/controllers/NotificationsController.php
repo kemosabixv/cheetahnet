@@ -72,7 +72,17 @@ class NotificationsController extends CI_Controller
 
         public function update_seen()
         {
+            $rows = $this->input->post("rows");
+            // var_dump($rows);
 
+            $selectedRows = [];
+            foreach ($rows as $row) {
+                $selectedRows[] = $row["id"];
+            }
+            // var_dump($selectedRows);
+            $response=$this->notifications_model->update_seen($selectedRows);
+            header("Content-Type: application/json");
+            echo json_encode($response);
         }
 
         public function getNotificationList()
