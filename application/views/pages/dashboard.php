@@ -107,6 +107,31 @@
         <!-- Total Devices Card -->
         <div class="col-xxl-4 col-xl-12">
           <div class="card info-card customers-card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+                <li>
+                  <a id="total_devices_filter_today" class="dropdown-item" href="#">Today</a>
+                </li>
+                <li>
+                <a id="total_devices_filter_yesterday" class="dropdown-item" href="#">Yesterday</a>
+                </li>
+                <li>
+                <a id="total_devices_filter_lastweek" class="dropdown-item" href="#">Last Week</a>
+                </li>
+                <li>
+                <a id="total_devices_filter_lastmonth" class="dropdown-item" href="#">Last Month</a>
+                </li>
+                <li>
+                <a id="total_devices_filter_lastyear" class="dropdown-item" href="#">Last Year</a>
+                </li>
+              </ul>
+            </div>
             <div class="card-body">
               <h5 class="card-title">Total Devices <span id='total_devices_filter_display'>| Today</span>
               </h5>
