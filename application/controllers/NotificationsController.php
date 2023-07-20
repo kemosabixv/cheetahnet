@@ -7,9 +7,9 @@ class NotificationsController extends CI_Controller
         public function __construct()
         {
             parent::__construct();
-            if ($this->session->userdata("logged_in") !== true) {
-                redirect("welcome");
-            }
+            // if ($this->session->userdata("logged_in") !== true) {
+            //     redirect("welcome");
+            // }
             $this->load->model("Notifications_Model", "notifications_model");      
             $this->load->model("Devices_Model", "devices_model");  
         }
@@ -95,6 +95,7 @@ class NotificationsController extends CI_Controller
             ];
             echo json_encode($output);
         }
+
         public function getmastid($mastname){
             $mastid = $this->devices_model->getMastId($mastname);
             return $mastid;

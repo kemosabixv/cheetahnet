@@ -1,4 +1,5 @@
- <script>
+
+<script>
    $(document).ready(function() {
 
    	$('#update_radiomode_connectedfrom').click(function() {
@@ -117,6 +118,11 @@
 
    		var wirelessModeSelect = document.getElementById("wireless_mode");
    		var connectedFromDiv = document.getElementById("connected_from_div");
+		if (deviceData[3] == "Station") {
+			connectedFromDiv.style.display = "block";
+   			} else {
+   			connectedFromDiv.style.display = "none";
+   			}
    		// Event listener for "change" event of wireless_mode select
    		wirelessModeSelect.addEventListener("change", function() {
    			if (this.value === "Station") {
@@ -143,42 +149,19 @@
    			console.log(connectedfrom);
    			document.getElementById("connected_from").value = connectedfrom;
    		});
+		$('#devicesForm').attr('action', 'editDeviceData');
    	});
 
-   	// Common submit event handler
-   	function submitForm() {
-   		var formData = new FormData($('#devicesForm')[0]);
-   		showLoadingSweetAlert("Saving Device...");
-   		$.ajax({
-   			type: 'POST',
-   			url: "editDeviceData",
-   			data: formData,
-   			cache: false,
-   			contentType: false,
-   			processData: false,
-   			success: (data) => {
-   				console.log(data);
-   				if (data.error === 0) {
-   					$("#deviceModal").modal('hide');
-   					swal.close();
-   					showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/successful_anim.gif");
-   				} else {
-   					$("#deviceModal").modal('hide');
-   					swal.close();
-   					showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/error_anim.gif");
-   				}
-   			},
-   			error: function(data) {
-   				console.log(data);
-   			}
-   		});
-   	}
+	//  $('#devicesForm').off('submit').on('submit', function(e) {
+    // e.preventDefault();
+    // var action = $(this).attr('action'); // Get the form action
 
-   	// Attach submit event handler
-   	$('#devicesForm').submit(function(e) {
-   		e.preventDefault();
-   		submitForm();
-   	});
+    // if (action === 'addDeviceData') {
+    //     insertsubmitForm();
+    // } else if (action === 'editDeviceData') {
+    //     editsubmitForm();
+    // }
+	// });
 
    	//Add event listener to the delete button
    	$('#devices_table').on('click', '.delete-btn', function() {
@@ -240,19 +223,19 @@
    	}, 5000);
 
 
-   	var select = document.getElementById("wireless_mode");
-   	select.addEventListener("change", function() {
+   	// // var select = document.getElementById("wireless_mode");
+   	// // select.addEventListener("change", function() {
 
-   		console.log("Selected option: " + select.value);
-   		if (select.value == "AP") {
-   			document.getElementById("connected_fromdiv").style.visibility = "hidden"
+   	// // 	console.log("Selected option: " + select.value);
+   	// // 	if (select.value == "AP") {
+   	// // 		document.getElementById("connected_fromdiv").style.visibility = "hidden"
 
-   		} else {
-   			document.getElementById("connected_fromdiv").style.visibility = "visible"
+   	// // 	} else {
+   	// // 		document.getElementById("connected_fromdiv").style.visibility = "visible"
 
-   		}
+   	// // 	}
 
-   	});
+   	// });
 
    });
 
@@ -315,23 +298,34 @@
    			connectedFromDiv.style.display = "none";
    		}
    	});
-
    	$('#devicesModal').modal('show');
    	$('#deviceModalTitle').text("Add Device");
-   	getMastId(deviceData[2], function(mast_id) {
-   		console.log(mast_id);
-   		document.getElementById("mast_name").value = mast_id;
-   		console.log(mast_id);
-   	});
    	getConnectedFrom(deviceData[5], function(connectedfrom) {
    		console.log(connectedfrom);
    		document.getElementById("connected_from").value = connectedfrom;
    	});
-   	// Modify submit event handler for add_devicemodal
-   	$('#devicesForm').off('submit').on('submit', function(e) {
-   		console.log("submitting form");
-   		e.preventDefault();
-   		var formData = new FormData(this);
+	// Set action attribute for form submission
+	$('#devicesForm').attr('action', 'addDeviceData');
+   	$('#devicesForm').trigger('reset');
+   }
+   
+   $('#devicesForm').off('submit').on('submit', function(e) {
+    e.preventDefault();
+    var action = $(this).attr('action'); // Get the form action
+
+    if (action === 'addDeviceData') {
+        insertsubmitForm();
+    } else if (action === 'editDeviceData') {
+        editsubmitForm();
+    }
+	});
+
+   function insertsubmitForm() {
+   		var formData = new FormData($('#devicesForm')[0]);
+		console.log($('#devicesForm')[0]);
+		for (var pair of formData.entries()) {
+			console.log(pair[0]+ ', ' + pair[1]);
+		}
    		showLoadingSweetAlert("Saving Device...");
    		$.ajax({
    			type: 'POST',
@@ -339,7 +333,7 @@
    			data: formData,
    			cache: false,
    			contentType: false,
-   			processData: false, // Set processData to false
+   			processData: false,
    			success: (data) => {
    				console.log(data);
    				if (data.error === 0) {
@@ -356,11 +350,36 @@
    				console.log(data);
    			}
    		});
-   	});
-   	$('#devicesForm').trigger('reset');
-   }
+   	}
+	   function editsubmitForm() {
+   		var formData = new FormData($('#devicesForm')[0]);
+   		showLoadingSweetAlert("Saving Device...");
+   		$.ajax({
+   			type: 'POST',
+   			url: "editDeviceData",
+   			data: formData,
+   			cache: false,
+   			contentType: false,
+   			processData: false,
+   			success: (data) => {
+   				console.log(data);
+   				if (data.error === 0) {
+   					$("#deviceModal").modal('hide');
+   					swal.close();
+   					showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/successful_anim.gif");
+   				} else {
+   					$("#deviceModal").modal('hide');
+   					swal.close();
+   					showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/error_anim.gif");
+   				}
+   			},
+   			error: function(data) {
+   				console.log(data);
+   			}
+   		});
+   	}
 
-
+   
    function showLoadingSweetAlert(title) {
    	Swal.fire({
    		text: title,

@@ -64,15 +64,15 @@
           <h5 class="card-title" style="font-size: 14px; padding-top: 5px; padding-bottom: 5px;">Device Model: <strong><?php echo $device_model;?></strong>
           </h5>
           <p class="card-text">
-            <img src="
-							
-							<?php echo base_url('assets\img\airmax_devices\LBE-M5-23.png'); ?>" class="img-fluid rounded-start" alt="...">
+            <img src="<?php echo base_url('assets\img\airmax_devices\LBE-M5-23.png'); ?>" class="img-fluid rounded-start" alt="...">
           </p>
-          <a href="http://
-							
-							<?php echo $ip_address; ?>" target="_blank" class="btn btn-primary">Login </a>
+          <a href="http://<?php echo $ip_address; ?>" target="_blank" class="btn btn-primary">Login </a>
+          <div style="margin-top:10px">
+          <button id="update_button" class="btn btn-primary" type="button">Update</button>
+          </div>
         </div>
       </div>
+      
     </div>
     <div class="row">
       <div class="col-lg-6">

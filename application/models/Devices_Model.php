@@ -15,25 +15,75 @@ class Devices_Model extends CI_Model
 
     public function insertMastData($mast_data)
     {
-        $this->db->where("mastid", $mast_data["mastid"]);
-        $q = $this->db->get("tbl_masts");
-
-        if ($q->num_rows() > 0) {
+        $this->db->insert("tbl_masts", $mast_data);
+        if ($this->db->affected_rows() > 0) {
+            unset($mast_data["dateCreated"]);
+            $mast_data["operation"] = "insert";
+            $mast_data["timestamp"] = date("Y-m-d H:i:s");
+            $mastid = "";
+            $this->db->select("mastid");
+            $this->db->where("mast_name", $mast_data["mast_name"]);
+            $query = $this->db->get("tbl_masts");
+            if ($query->num_rows() > 0) {
+                $mast_id = $query->result()[0]->mastid;
+            }
+            $mast_data["mastid"] = $mast_id;
             $this->db->where("mastid", $mast_data["mastid"]);
-            $this->db->update("tbl_masts", $mast_data);
+            $q = $this->db->get("tbl_masts_history");
+            if ($q->num_rows() > 0) {
+                $this->db->where("mastid", $mast_data["mastid"]);
+                $this->db->update("tbl_masts_history", $mast_data);
+                return true;
+            } else {
+                $this->db->insert("tbl_masts_history", $mast_data);
+                return true;
+            }
+        } else {
 
+            return false;
+        } 
+    }
+
+    public function editMastData($mast_data)
+    {
+
+        // $this->db->select("mastid", "mast_name", "location", "height", "connection_via", "connected_from");
+        $this->db->where("mastid", $mast_data["mastid"]);
+        $query = $this->db->get("tbl_masts");
+        
+        if ($query->num_rows() > 0) {
+            $this->db->where("mastid", $mast_data["mastid"]);
+            $q = $this->db->get("tbl_masts_history");
+            $history_data=[];            
+            $history_data["mastid"] = $q->result()[0]->mastid;
+            $history_data["mast_name"] = $q->result()[0]->mast_name;
+            $history_data["location"] = $q->result()[0]->location;
+            $history_data["connection_via"] = $q->result()[0]->connection_via;
+            $history_data["connected_from"] = $q->result()[0]->connected_from;
+            $history_data["operation"] = "update";
+            $history_data["timestamp"] = date("Y-m-d H:i:s");
+            $this->db->where("mastid", $mast_data["mastid"]);
+            $this->db->update("tbl_masts_history", $history_data);
+            $this->db->where("mastid", $mast_data["mastid"]);
+            $this->db->update("tbl_masts", $mast_data);  
             return true;
         } else {
-            $this->db->insert("tbl_masts", $mast_data);
-
-            return true;
+            return false;
         }
     }
 
     public function deleteMast($mast_data)
     {
+        $history_data["operation"] = "delete";
+        $history_data["timestamp"] = date("Y-m-d H:i:s");
         $this->db->where("mastid", $mast_data["mastid"]);
         $this->db->delete("tbl_masts");
+        
+        $this->db->select("operation", "timestamp");
+        $this->db->where("mastid", $mast_data["mastid"]);
+        $this->db->update("tbl_masts_history", $history_data);
+
+        
         $query = $this->db->query(
             "SELECT MAX(mastid) AS max_id FROM tbl_masts"
         );
@@ -62,41 +112,99 @@ class Devices_Model extends CI_Model
         // return $query;
         return $this->db->get("tbl_devices");
     }
-    public function getAllDevices2()
-    {
-       
-        
-    }
+   
 
     public function insertDeviceData($device_data)
-    {
-        $this->db->select("deviceid", "device_name", "mastid", "ip_address", "wireless_mode", "connected_from", "dateCreated");
-        $this->db->where("deviceid", $device_data["deviceid"]);
-        $query = $this->db->get("tbl_devices");
+    {   
         
+        $exists = 0;
+        $this->db->select("ip_address");
+        $this->db->where("ip_address", $device_data["ip_address"]);
+        $query = $this->db->get("tbl_devices");
+        // echo $query->num_rows();
         if ($query->num_rows() > 0) {
-            $this->db->where("deviceid", $device_data["deviceid"]);
-            $this->db->update("tbl_devices", $device_data);
-            return true;
-        } else {
-            $this->db->insert("tbl_devices", $device_data);
-            return true;
+            $exists = 1;
+            // echo "num_rows";
+            // var_dump($exists);
         }
-    }
+        if ($exists > 0){
+            // echo "not null";
+            return $response = [
+                "error" => 1,
+                "message" => "Device IP already exists"
+            ];
+        } else {
+            $this->db->select("deviceid", "device_name", "mastid", "ip_address", "wireless_mode", "connected_from", "dateCreated");
+            $this->db->insert("tbl_devices", $device_data);
+        }
+        unset($device_data["dateCreated"]);
+        $device_data["operation"] = "insert";
+        $device_data["timestamp"] = date("Y-m-d H:i:s");
+        
+        $deviceid = "";
+        $this->db->select("deviceid");
+        $this->db->where("ip_address", $device_data["ip_address"]);
+        $query = $this->db->get("tbl_devices");
+        if ($query->num_rows() > 0) {
+            $deviceid = $query->result()[0]->deviceid;
+        }
+        $device_data["deviceid"] = $deviceid;
+        // echo ("model method");
+        // var_dump($device_data);
+        $this->db->select("deviceid", "device_name", "mastid", "ip_address", "wireless_mode", "connected_from", "operation", "timestamp");
+        $this->db->where("deviceid", $device_data["deviceid"]);
+        $query = $this->db->get("tbl_devices_history");
+        if ($query->num_rows() > 0) {
+            $this->db->select("device_name", "mastid", "ip_address", "wireless_mode", "connected_from", "operation", "timestamp");
+            $this->db->where("deviceid", $device_data["deviceid"]);
+                $this->db->update("tbl_devices_history", $device_data);
+                return $response = [
+                    "error" => 0,
+                    "message" => "Device added successfully"
+                ];
+            } else {
+                $this->db->insert("tbl_devices_history", $device_data);
+                return $response = [
+                    "error" => 0,
+                    "message" => "Device added successfully"
+                ];
+            }        
+        }
+       
+    
 
     public function editDeviceData($device_data)
     {
-        $this->db->select("deviceid", "device_name", "mastid", "ip_address", "wireless_mode", "connected_from");
+
+        // $this->db->select("deviceid", "device_name", "mastid", "ip_address", "wireless_mode", "connected_from");
         $this->db->where("deviceid", $device_data["deviceid"]);
         $query = $this->db->get("tbl_devices");
         
         if ($query->num_rows() > 0) {
             $this->db->where("deviceid", $device_data["deviceid"]);
-            $this->db->update("tbl_devices", $device_data);
+            $q = $this->db->get("tbl_devices_history");
+            $history_data=[];
+            $history_data["deviceid"] = $q->result()[0]->deviceid;
+            $history_data["device_name"] = $q->result()[0]->device_name;
+            $history_data["mastid"] = $q->result()[0]->mastid;
+            $history_data["wireless_mode"] = $q->result()[0]->wireless_mode;
+            $history_data["ip_address"] = $q->result()[0]->ip_address;
+            $history_data["connected_from"] = $q->result()[0]->connected_from;
+            $history_data["connection_status"] = $q->result()[0]->connection_status;
+            $history_data["mac"] = $q->result()[0]->mac;
+            $history_data["ssid"] = $q->result()[0]->ssid;
+            $history_data["device_model"] = $q->result()[0]->device_model;
+            $history_data["model_short"] = $q->result()[0]->model_short;
+            $history_data["firmware_version"] = $q->result()[0]->firmware_version;
+            $history_data["operation"] = "update";
+            $history_data["timestamp"] = date("Y-m-d H:i:s");
+            $this->db->where("deviceid", $device_data["deviceid"]);
+            $this->db->update("tbl_devices_history", $history_data);
+            $this->db->where("deviceid", $device_data["deviceid"]);
+            $this->db->update("tbl_devices", $device_data);  
             return true;
         } else {
-            $this->db->insert("tbl_devices", $device_data);
-            return true;
+            return false;
         }
     }
 
@@ -159,25 +267,31 @@ class Devices_Model extends CI_Model
 
     public function deleteDevice($device_data)
     {
+        $history_data["operation"] = "delete";
+        $history_data["timestamp"] = date("Y-m-d H:i:s");
         $this->db->where("deviceid", $device_data["device_id"]);
         $this->db->delete("tbl_devices");
-        $query = $this->db->query(
-            "SELECT MAX(deviceid) AS max_id FROM tbl_devices"
-        );
-        $result = $query->row();
-        $max_id = $result->max_id;
+        
+        $this->db->select("operation", "timestamp");
+        $this->db->where("deviceid", $device_data["device_id"]);
+        $this->db->update("tbl_devices_history", $history_data);
+        // $query = $this->db->query(
+        //     "SELECT MAX(deviceid) AS max_id FROM tbl_devices"
+        // );
+        // $result = $query->row();
+        // $max_id = $result->max_id;
 
-        if ($this->db->error()["message"]) {
-            return false;
-        } elseif (!$this->db->affected_rows()) {
-            return false;
-        } else {
-            // reset auto increment
-            $this->db->query(
-                "ALTER TABLE tbl_devices AUTO_INCREMENT = " . ($max_id + 1)
-            );
+        // if ($this->db->error()["message"]) {
+        //     return false;
+        // } elseif (!$this->db->affected_rows()) {
+        //     return false;
+        // } else {
+        //     // reset auto increment
+        //     $this->db->query(
+        //         "ALTER TABLE tbl_devices AUTO_INCREMENT = " . ($max_id + 1)
+        //     );
             return true;
-        }
+        // }
     }
 
     public function getConnectedFrom($connectedfrom)

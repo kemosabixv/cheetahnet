@@ -136,50 +136,101 @@ class Discovery_Model extends CI_Model
         $this->db->query(
             "ALTER TABLE tbl_devices AUTO_INCREMENT = " . ($max_id + 1)
         );
-
+        $existing_devices = 0;
         foreach ($discovery_device_data as $device) {
             //get rows from tbl_devices where ip_address = $device['ip_address']
             $this->db->where("ip_address", $device["ip_address"]);
             $query = $this->db->get("tbl_devices");
-
-            //if rows exist return json response with error message and ip address that exists
             if ($query->num_rows() > 0) {
-                $response = [
-                    "error" => 1,
-                    "message" =>
-                        "Device with IP Address " .
-                        $discovery_device_data["ip_address"] .
-                        " already exists",
-                ];
-                return $response;
-            } else {
-                //else insert data into tbl_devices
-                $batch_data = [];
+                $existing_devices++;
+            }
+        }
+        if ($existing_devices > 0) {
+            $response = [
+                "error" => 1,
+                "message" =>
+                    "Device with IP Address " .
+                    $discovery_device_data["ip_address"] .
+                    " already exists",
+            ];
+            return $response;
+        }
+        //insert data into tbl_devices
+        $batch_data = [];
 
+        foreach ($discovery_device_data as $device) {
+            $row_data = [
+                "device_name" => $device["device_name"],
+                "ip_address" => $device["ip_address"],
+                "mac" => $device["mac"],
+                "device_model" => $device["device_model"],
+                "model_short" => $device["model_short"],
+                "ssid" => $device["ssid"],
+                "firmware_version" => $device["firmware_version"],
+                "mastid" => $device["mastid"],
+                "wireless_mode" => $device["wireless_mode"],
+                "connected_from" => $device["connected_from"],
+                "dateCreated" => date("Y-m-d H:i:s")
+            ];
+            $batch_data1[] = $row_data;
+            }
+            // Insert the prepared batch data into tbl_discovery
+            $this->db->insert_batch("tbl_devices", $batch_data1);
+            if ($this->db->affected_rows() > 0) {
                 foreach ($discovery_device_data as $device) {
-                    $row_data = [
-                        "device_name" => $device["device_name"],
-                        "ip_address" => $device["ip_address"],
-                        "mac" => $device["mac"],
-                        "device_model" => $device["device_model"],
-                        "model_short" => $device["model_short"],
-                        "ssid" => $device["ssid"],
-                        "firmware_version" => $device["firmware_version"],
-                        "mastid" => $device["mastid"],
-                        "wireless_mode" => $device["wireless_mode"],
-                        "connected_from" => $device["connected_from"],
-                        "dateCreated" => $device["dateCreated"]
-                    ];
-                    $batch_data[] = $row_data;
+                $row_data = [
+                    "deviceid"=> $this->getDeviceId($device["device_name"]),
+                    "device_name" => $device["device_name"],
+                    "ip_address" => $device["ip_address"],
+                    "mac" => $device["mac"],
+                    "device_model" => $device["device_model"],
+                    "model_short" => $device["model_short"],
+                    "ssid" => $device["ssid"],
+                    "firmware_version" => $device["firmware_version"],
+                    "mastid" => $device["mastid"],
+                    "wireless_mode" => $device["wireless_mode"],
+                    "connected_from" => $device["connected_from"],
+                    "operation" => "insert",
+                    "timestamp" => date("Y-m-d H:i:s")
+                ];
+                $batch_data2[] = $row_data;
                 }
-                // Insert the prepared batch data into tbl_discovery
-                $this->db->insert_batch("tbl_devices", $batch_data);
-                if ($this->db->affected_rows() > 0) {
-                    $response = [
+                // var_dump($batch_data2);
+                $existing_deviceid= 0;
+                foreach($batch_data2 as $device){
+                    $this->db->where("deviceid", $device["deviceid"]);
+                    $query = $this->db->get("tbl_devices_history");
+                    if ($query->num_rows() > 0) {
+                        $existing_deviceid++;
+                    }
+                }
+                if ($existing_deviceid > 0) {
+                   foreach($batch_data2 as $device){
+                    $this->db->select(
+                    "device_name",
+                    "mastid", 
+                    "wireless_mode", 
+                    "ip_address", 
+                    "connected_from", 
+                    "mac", 
+                    "ssid", 
+                    "device_model", 
+                    "model_short", 
+                    "firmware_version", 
+                    "operation", 
+                    "timestamp");
+                    $this->db->where("deviceid", $device["deviceid"]);
+                    $this->db->update("tbl_devices_history", $device);
+                   }
+                }else{
+                $this->db->insert_batch("tbl_devices_history", $batch_data2);
+                if($this->db->affected_rows() > 0) {
+                        $response = [
                         "error" => 0,
                         "message" => "Device data inserted successfully",
                     ];
                     return $response;
+
                 } else {
                     $error_message = $this->db->error()["message"];
                     $response = [
@@ -187,8 +238,28 @@ class Discovery_Model extends CI_Model
                         "message" => "Database Error: $error_message",
                     ];
                     return $response;
-                }
+                } 
+            }
+            } else {   
+                $error_message = $this->db->error()["message"];
+                $response = [
+                    "error" => 1,
+                    "message" => "Database Error: $error_message",
+                ];
+                return $response;
             }
         }
+        
+    
+
+    public function getDeviceId($devicename)
+    {
+        $this->db->select("deviceid");
+        $this->db->from("tbl_devices");
+        $this->db->where("device_name", $devicename);
+        $query = $this->db->get();
+        $response= $query->result();
+        // var_dump($response[0]->deviceid);
+        return $response[0]->deviceid;
     }
 }

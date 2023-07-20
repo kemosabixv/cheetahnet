@@ -57,7 +57,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="deviceModalTitle">Add Device</h5>
+            <h5 class="modal-title" id="deviceModalTitle"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -72,9 +72,13 @@
               <div class="mb-1">
                 <label class="form-label" for="basicSelect">Mast Name</label>
                 <select class="form-select" id="mast_name" name="mast_name">
-                  <!-- <option>Choose Mast</option> --> <?php foreach($all_masts as $each){ ?> <option value="
-													<?php echo $each->mastid; ?>"> <?php echo $each->mast_name;?> </option>'; <?php } ?>
-                </select>
+                <!-- <option>Choose Mast</option> -->
+                <?php foreach($all_masts as $each){ ?>
+                  <option value="<?php echo $each->mastid; ?>">
+                    <?php echo $each->mast_name; ?>
+                  </option>
+                <?php } ?>
+              </select>
               </div>
               <div class="col-md-12">
                 <select name="wireless_mode" id="wireless_mode" class="form-select" placeholder="Choose Radio Mode">
@@ -89,9 +93,13 @@
                 <div class="mb-1">
                   <label class="form-label" for="basicSelect">Connected From (Devices)</label>
                   <select class="form-select" id="connected_from" name="connected_from">
-                    <!-- <option>Choose Access Point</option>  --> <?php foreach($all_devices as $each){ ?> <option value="
-															<?php echo $each->deviceid; ?>"> <?php echo $each->device_name;?> </option>'; <?php } ?>
-                  </select>
+                  <!-- <option>Choose Access Point</option> -->
+                  <?php foreach($all_devices as $each){ ?>
+                    <option value="<?php echo $each->deviceid; ?>">
+                      <?php echo $each->device_name; ?>
+                    </option>
+                  <?php } ?>
+                </select>
                 </div>
               </div>
               <div class="text-center">

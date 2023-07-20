@@ -6,9 +6,9 @@ class DevicesController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        if ($this->session->userdata("logged_in") !== true) {
-            redirect("welcome");
-        }
+        // if ($this->session->userdata("logged_in") !== true) {
+        //     redirect("welcome");
+        // }
         $this->load->model("Devices_Model", "devices_model");
         $this->load->library("africastalking");
     }
@@ -66,6 +66,7 @@ class DevicesController extends CI_Controller
                 $r->mastid,
                 $r->mast_name,
                 $r->location,
+                $r->height,
                 $r->connection_via,
                 $this->getMastName($r->connected_from),
                 date("d-m-Y", strtotime($r->dateCreated)),
@@ -87,6 +88,7 @@ class DevicesController extends CI_Controller
         $mast_data["mastid"] = $this->input->post("mastid", true);
         $mast_data["mast_name"] = $this->input->post("mast_name", true);
         $mast_data["location"] = $this->input->post("mast_location", true);
+        $mast_data["height"] = $this->input->post("mast_height", true);
 
         $mast_data["connection_via"] = $this->input->post(
             "mast_connected_via",
@@ -100,6 +102,38 @@ class DevicesController extends CI_Controller
         $mast_data["dateCreated"] = date("Y-m-d H:i:s");
 
         $mastData = $this->devices_model->insertMastData($mast_data);
+        if ($mastData) {
+            $response = [
+                "error" => 0,
+                "message" => "Saved Succcessfully!!",
+            ];
+        } else {
+            $response = [
+                "status" => 1,
+                "message" => "Failed! Please try again!",
+            ];
+        }
+
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    public function editMastData()
+    {
+        $mast_data["mastid"] = $this->input->post("mastid", true);
+        $mast_data["mast_name"] = $this->input->post("mast_name", true);
+        $mast_data["location"] = $this->input->post("mast_location", true);
+        $mast_data["connection_via"] = $this->input->post(
+            "mast_connected_via",
+            true
+        );
+        $mast_data["height"] = $this->input->post("mast_height", true);
+        $mast_data["connected_from"] = $this->input->post(
+            "mast_connected_from",
+            true
+        );
+
+        $mastData = $this->devices_model->editMastData($mast_data);
         if ($mastData) {
             $response = [
                 "error" => 0,
@@ -236,33 +270,18 @@ class DevicesController extends CI_Controller
         $device_data["deviceid"] = $this->input->post("device_id", true);
         $device_data["device_name"] = $this->input->post("device_name", true);
         $device_data["mastid"] = $this->input->post("mast_name", true);
-        $device_data["wireless_mode"] = $this->input->post(
-            "wireless_mode",
-            true
-        );
+        $device_data["wireless_mode"] = $this->input->post("wireless_mode",true);
         $device_data["ip_address"] = $this->input->post("ip_address", true);
-        $device_data["connected_from"] = $this->input->post(
-            "connected_from",
-            true
-        );
+        $device_data["connected_from"] = $this->input->post("connected_from",true);
         $device_data["dateCreated"] = date("Y-m-d H:i:s");
         if ($device_data["connected_from"] == null) {
             $device_data["connected_from"] = "0";
         }
-
-        $device_data = $this->devices_model->insertDeviceData($device_data);
-        if ($device_data) {
-            $response = [
-                "error" => 0,
-                "message" => "Saved Succcessfully!!",
-            ];
-        } else {
-            $response = [
-                "status" => 1,
-                "message" => "Failed! Please try again!",
-            ];
-        }
-
+        // echo ("controller method");
+        // var_dump($device_data);
+        $response = $this->devices_model->insertDeviceData($device_data);
+       
+        // echo $response;
         header("Content-Type: application/json");
         echo json_encode($response);
     }
@@ -300,6 +319,7 @@ class DevicesController extends CI_Controller
 
         header("Content-Type: application/json");
         echo json_encode($response);
+    
     }
 
     public function getMastName($mastid)
@@ -312,6 +332,7 @@ class DevicesController extends CI_Controller
     public function getMastId()
     {
         $mastname = $this->input->post("mastname", true);
+        // var_dump($mastname);
         $mast_id = $this->devices_model->getMastId($mastname);
 
         $response = [

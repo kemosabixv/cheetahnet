@@ -38,14 +38,11 @@
             document.getElementById("mastid").value = mastData[0];
             document.getElementById("mast_name").value = mastData[1];
             document.getElementById("mast_location").value = mastData[2];
-            document.getElementById("mast_connected_via").value = mastData[3];
-            getMastId(mastData[4], function(mast_id) {
-               console.log(mast_id);
-               document.getElementById("mast_connected_from").value = mast_id;
-            });
-
+            document.getElementById("mast_connected_via").value = mastData[4];
+            document.getElementById("mast_height").value = mastData[3];
+            document.getElementById("mast_connected_from").value = mastData[5];
+            $('#mastsForm').attr('action', 'editMastData');
          });
-
 
 
       //Add event listener to the delete button
@@ -101,36 +98,7 @@
 
    });
 
-   $('#mastsForm').submit(function(e) {
-    e.preventDefault();
-    var formData = new FormData(this);
-    showLoadingSweetAlert("Saving Mast...");
-    $.ajax({
-        type: 'POST',
-        url: "insertMastData",
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: (data) => {
-            console.log(data);
-            if (data.error === 0) {
-                $("#mastModal").modal('hide');
-                swal.close();
-                showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/successful_anim.gif");
 
-            } else {
-                $("#mastModal").modal('hide');
-                swal.close();
-                showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/error_anim.gif");
-
-            }
-        },
-        error: function(data) {
-            console.log(data);
-        }
-    });
-});
 
 function getMastId(mastname, callback) {
     console.log(mastname);
@@ -182,8 +150,83 @@ function getConnectedFrom(connectedfrom, callback) {
 function add_mastmodal() {
     $('#mastsModal').modal('show');
     $('#mastsModalTitle').text("Add Mast");
+    $('#mastsForm').attr('action', 'addMastData');
     $("#mastsForm").trigger("reset");
+}
+   
 
+$('#mastsForm').off('submit').on('submit', function(e) {
+e.preventDefault();
+var action = $(this).attr('action'); // Get the form action
+
+if (action === 'addMastData') {
+    insertsubmitForm();
+} else if (action === 'editMastData') {
+    editsubmitForm();
+}
+    
+});
+
+function insertsubmitForm() {
+var formData = new FormData($('#mastsForm')[0]);
+for (var pair of formData.entries()) {
+			console.log(pair[0]+ ', ' + pair[1]);
+		} 
+showLoadingSweetAlert("Saving Mast...");
+$.ajax({
+    type: 'POST',
+    url: "insertMastData",
+    data: formData,
+    cache: false,
+    contentType: false,
+    processData: false,
+    success: function(data) {
+        console.log(data);
+        if (data.error === 0) {
+            $("#mastModal").modal('hide');
+            swal.close();
+            showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/successful_anim.gif");
+        } else {
+            $("#mastModal").modal('hide');
+            swal.close();
+            showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/error_anim.gif");
+        }
+    },
+    error: function(data) {
+        console.log(data);
+    }
+});
+}
+
+function editsubmitForm() {
+    var formData = new FormData($('#mastsForm')[0]);
+    for (var pair of formData.entries()) {
+			console.log(pair[0]+ ', ' + pair[1]);
+		}    
+    showLoadingSweetAlert("Saving Mast...");
+    $.ajax({
+        type: 'POST',
+        url: "editMastData",
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(data) {
+            console.log(data);
+            if (data.error === 0) {
+                $("#mastModal").modal('hide');
+                swal.close();
+                showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/successful_anim.gif");
+            } else {
+                $("#mastModal").modal('hide');
+                swal.close();
+                showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/error_anim.gif");
+            }
+        },
+        error: function(data) {
+            console.log(data);
+        }
+    });
 }
 
 

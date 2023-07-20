@@ -74,9 +74,7 @@ class DashboardController extends CI_Controller
             $sub_array["ip"] = $row->ip_address;
             $sub_array["model"] = $row->model_short;
             $sub_array["date"] = $row->date_created;
-            $current_status = $this->get_current_connection_status(
-                $row->device_name
-            );
+            $current_status = $this->get_current_connection_status($row->device_name);
             $sub_array["current_status"] = $current_status;
             $data[] = $sub_array;
         }
@@ -97,6 +95,8 @@ class DashboardController extends CI_Controller
 
     public function get_current_connection_status($devicename)
     {
+        // echo $devicename;
+        // var_dump($devicename);
         $current_status = $this->dashboard_model->get_current_connection_status($devicename);
         return $current_status[0]->connection_status;
     }

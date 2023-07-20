@@ -131,16 +131,36 @@
               $('#airmaxCapacityProgressBar').attr('aria-valuenow', 0);
               $('#airmaxCapacityProgressBar').css('width', 0 + '%');
               $('#airmaxcapacityvalue').text(0)
-              
-              
             }
           }
         });
    }, interval = 5000);
 
-
-      
-  //   // Assuming throughputData is the variable containing the data from element0
+   //update button
+   $("#update_button").on('click', function() {
+    showLoadingSweetAlert("Updating Device...");
+    $.ajax({
+      url: "<?php echo base_url('update_device')?>/" + ip,
+      type: 'POST',
+      success: function (data) {
+        console.log(data);
+        if (data.error === 0) {
+          swal.close();
+          showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/successful_anim.gif");
+        } else {
+          swal.close();
+          showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/error_anim.gif");
+        }
+      }
+    });
+  });
+  
+  
+  
+  
+  //TODO:sort station and throughput based on snmp walk response json array
+  
+    //   // Assuming throughputData is the variable containing the data from element0
   //   // WLAN0 Chart
   //   new Chart(document.querySelector('#wlan0Chart'), {
   //     type: 'line',

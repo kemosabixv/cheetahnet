@@ -104,4 +104,52 @@ class SingleDeviceController extends CI_Controller
         // Close cURL
         curl_close($curl);
     }
+    public function update_device($ipaddress)
+    {
+        // Initialize cURL
+        $curl = curl_init();
+
+        // Set the cURL options
+        curl_setopt(
+            $curl,
+            CURLOPT_URL,
+            "http://localhost:8081/rpc/update_device/" . $ipaddress
+        );
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        // Execute the cURL request
+        $response = curl_exec($curl);
+
+        // Check for cURL errors
+        if (curl_errno($curl)) {
+            $error = curl_error($curl);
+            // Handle the error
+            // For example, you can log or display the error message
+            echo "cURL Error: " . $error;
+        } else {
+            // Decode the JSON response
+            $data = json_decode($response);
+            // var_dump($data);
+            // echo ($data[2]->error);
+            
+            if ($data[2]->error == "0") {
+                $jsonresponse = [
+                    "error" => 0,
+                    "message" => "Device updated successfully",
+                ];
+                $this->singledevicemodel->delete_past_notifications($ipaddress);
+            } else {
+                $jsonresponse = [
+                    "error" => 1,
+                    "message" => "Device update failed",
+                ];
+            }
+
+
+            header("Content-Type: application/json");
+            echo json_encode($jsonresponse);
+        }
+        // Close cURL
+        curl_close($curl);
+    }
 }

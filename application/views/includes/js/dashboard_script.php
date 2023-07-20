@@ -796,8 +796,10 @@
          url: 'get_connection_status_history', // Replace with the actual URL of your server endpoint
          type: 'GET',
          success: function(response) {
+            console.log("get_connection_status_history");
+            console.log();
             var offlineData = response.data.map(function(entry) {
-                  return parseInt(entry.offlne_count);
+                  return parseInt(entry.offline_count);
             });
 
             var onlineData = response.data.map(function(entry) {

@@ -228,7 +228,7 @@
 
         foreach($query->result() as $row){
             $sub_array = [];
-            $sub_array["offlne_count"] = $row->offlne_count;
+            $sub_array["offline_count"] = $row->offline_count;
             $sub_array["online_count"] = $row->online_count;
             $sub_array["date_created"] = $row->date_created;
             // $sub_array["id"] = $row->id;

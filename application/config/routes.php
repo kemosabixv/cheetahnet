@@ -55,6 +55,8 @@ $route['getAllMasts'] = 'devicescontroller/getAllMasts';
 
 $route['insertMastData'] = 'devicescontroller/insertMastData';
 
+$route['editMastData'] = 'devicescontroller/editMastData';
+
 $route['editDeviceData'] = 'devicescontroller/editDeviceData';
 
 $route['getAllDevices'] = 'devicescontroller/getAllDevices';
@@ -139,6 +141,8 @@ $route['getconnectionstatus/(:any)'] = 'SingleDeviceController/getconnectionstat
 $route['snmpgetruntimedevicedata/(:any)'] = 'SingleDeviceController/snmpgetruntimedevicedata/$1';
 
 $route['snmpgetrecurringdevicedata/(:any)'] = 'SingleDeviceController/snmpgetrecurringdevicedata/$1';
+
+$route['update_device/(:any)'] = 'SingleDeviceController/update_device/$1';
 
 
 
