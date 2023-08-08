@@ -11,28 +11,42 @@ class NotificationsStorageController extends CI_Controller
 
     public function storenotification($ipaddress, $messagecode)
     {
-        $devicedata[] = $this->notifications_model->getDeviceData($ipaddress);
-        $devicename = $devicedata[0]["device_name"];
-        $mastid = $devicedata[0]["mastid"];
-        $model_short = $devicedata[0]["model_short"];
+        $devicedata = $this->notifications_model->getDeviceData($ipaddress);
+        $data=[];
         $connection_status = $this->getconnectionstatus($messagecode);
         $seen = 0;
-        $date = date("Y-m-d H:i:s");
+        // var_dump($devicedata);
+        foreach ($devicedata as $row){
+            $data = [];
+            $data["mastid"] = $row->mastid;
+            $data["device_name"] = $row->device_name;
+            $data["model_short"] = $row->model_short;
+            $data["ip_address"] = $ipaddress;
+            $data["connection_status"] = $connection_status;
+            $data["date_created"] = date("Y-m-d H:i:s");
+            $data["seen"] = $seen;
 
-        $rowdata = [
-            "device_name" => $devicename,
-            "ip_address" => $ipaddress,
-            "mastid" => $mastid,
-            "model_short" => $model_short,
-            "connection_status" => $connection_status,
-            "seen" => $seen,
-            "date_created" => $date,
-        ];
+        }
 
-        $this->notifications_model->storeNotification($rowdata);
+        // $devicename = $data["device_name"];
+
+        // var_dump($devicename);
+        
+        // var_dump($data);
+
+        // $rowdata = [
+        //     "device_name" => $devicename,
+        //     "ip_address" => $ipaddress,
+        //     "mastid" => $mastid,
+        //     "model_short" => $model_short,
+        //     "connection_status" => $connection_status,
+        //     "seen" => $seen,
+        //     "date_created" => $date,
+        // ];
+
+        $this->notifications_model->storeNotification($data);
 
         header("Content-Type: application/json");
-        // echo json_encode($notificationbuffer);
         //return 200 response code
         http_response_code(200);
     }

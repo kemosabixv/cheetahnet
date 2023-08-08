@@ -1,11 +1,12 @@
 <div class="pagetitle">
-  <h1>Masts</h1>
+  <h1>Device Groups</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <a href="home">Home</a>
       </li>
-      <li class="breadcrumb-item active">Masts</li>
+      <li class="breadcrumb-item">Masts</li>
+      <li class="breadcrumb-item active">Device Groups</li>
     </ol>
   </nav>
 </div>
@@ -14,7 +15,7 @@
 <br>
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title">Mast Devices</h5>
+    <h5 class="card-title">Device Groups</h5>
    
     <!-- Table with hoverable rows -->
     <table class="table" id="mastdevices" style="width:100%">
@@ -41,4 +42,3 @@
 
 
 </div>
-<!-- End Basic Modal-->

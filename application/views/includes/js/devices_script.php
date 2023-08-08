@@ -1,6 +1,40 @@
 
 <script>
    $(document).ready(function() {
+	
+	$('#select_int').click(function () {
+      $('#InterfaceModal').modal('show');
+    });
+	
+	$('#InterfaceForm').submit(function (e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+      showLoadingSweetAlert("Saving Interface...");
+      $.ajax({
+        type: 'POST',
+        url: "<?php echo base_url('addinterface'); ?>",
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+          console.log(data);
+          if (data.error === 0) {
+            $("#InterfaceModal").modal('hide');
+            swal.close();
+            showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/successful_anim.gif");
+          }
+          else {
+            $("#InterfaceModal").modal('hide');
+            swal.close();
+            showResultSweetAlert(data.message, "<?php echo base_url();?>assets/img/error_anim.gif");
+          }
+        },
+        error: function (data) {
+          console.log(data);
+        }
+      });
+    });
 
    	$('#update_radiomode_connectedfrom').click(function() {
    		$('#update_radiomode_connectedfrom_modal').modal('show');

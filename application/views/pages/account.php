@@ -25,12 +25,7 @@
               $role = $this->session->userdata('level_name');
               echo $role;
               ?></h3>
-              <div class="social-links mt-2">
-                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-              </div>
+              
             </div>
           </div>
 
@@ -60,8 +55,6 @@
               <div class="tab-content pt-2">
 
                 <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                  <h5 class="card-title">About</h5>
-                  <p class="small fst-italic">Test.</p>
 
                   <h5 class="card-title">Profile Details</h5>
 
@@ -79,21 +72,11 @@
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Job</div>
+                    <div class="col-lg-3 col-md-4 label">Role</div>
                     <div class="col-lg-9 col-md-8"><?php
               $role = $this->session->userdata('level_name');
               echo $role;
               ?></div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Country</div>
-                    <div class="col-lg-9 col-md-8">Kenya</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Address</div>
-                    <div class="col-lg-9 col-md-8">Mapa House Kiambu</div>
                   </div>
 
                   <div class="row">

@@ -2,6 +2,15 @@
 
 class Notifications_Model extends CI_Model
 {
+    public function getDeviceData($ipaddress){
+        $this->db->select(
+            "device_name, mastid, model_short"
+        );
+        $this->db->from("tbl_devices");
+        $this->db->where("ip_address", $ipaddress);
+        $query = $this->db->get();
+        return $query->result();
+    }
     public function storeNotification($notificationdata)
     {
         $this->db->insert("tbl_notifications", $notificationdata);

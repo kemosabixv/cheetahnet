@@ -71,6 +71,8 @@ $route['update_radiomode_connectedfrom'] = 'devicescontroller/update_radiomode_c
 
 $route['deleteMast'] = 'devicescontroller/deleteMast';
 
+$route['addinterface'] = 'devicescontroller/addinterface';
+
 
 
 //topologycontroller routes
@@ -106,7 +108,7 @@ $route['cleardiscoverydata'] = 'discoverycontroller/cleardiscoverydata';
 
 $route['addDiscoveryDevices'] = 'discoverycontroller/addDiscoveryDevices';
 
-$route['addinterface'] = 'discoverycontroller/addinterface';
+// $route['addinterface'] = 'discoverycontroller/addinterface';
 
 
 //notificationscontroller routes

@@ -2,7 +2,54 @@
 
 class Devices_Model extends CI_Model
 {
-    //TODO: add logic to use history tables
+    public function insertInterfaceData($interface_data)
+    {
+        $this->db->where("id", 1);
+        $query = $this->db->get("tbl_interfaces");
+
+        if ($query->num_rows() > 0) {
+            $this->db->where("id", 1);
+            $this->db->update("tbl_interfaces", $interface_data);
+        } else {
+            $interface_data["id"] = 1;
+            $this->db->insert("tbl_interfaces", $interface_data);
+        }
+
+        if ($this->db->affected_rows() >= 0) {
+            return true;
+        } else {
+            $error_message = $this->db->error()["message"];
+            $response = [
+                "error" => 1,
+                "message" => "Database Error: $error_message",
+            ];
+            header("Content-Type: application/json");
+            echo json_encode($response);
+            return false;
+        }
+    }
+
+    public function get_interface()
+    {
+        $this->getinterfaceinfo();
+        $query = $this->db->get("tbl_interfaces");
+        return $query->result();
+    }
+
+    public function getinterfaceinfo()
+    {
+        $url = "http://localhost:8081/rpc/return-interfaces";
+        // Initialize cURL
+        $ch = curl_init($url);
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Execute the cURL request
+        $apiresponse = curl_exec($ch);
+        // Close the cURL session
+        curl_close($ch);
+    }
+
+
     public function getAllMasts()
     {
         $query = $this->db->get("tbl_masts");
@@ -54,18 +101,34 @@ class Devices_Model extends CI_Model
         if ($query->num_rows() > 0) {
             $this->db->where("mastid", $mast_data["mastid"]);
             $q = $this->db->get("tbl_masts_history");
-            $history_data=[];            
-            $history_data["mastid"] = $q->result()[0]->mastid;
-            $history_data["mast_name"] = $q->result()[0]->mast_name;
-            $history_data["location"] = $q->result()[0]->location;
-            $history_data["connection_via"] = $q->result()[0]->connection_via;
-            $history_data["connected_from"] = $q->result()[0]->connected_from;
-            $history_data["operation"] = "update";
-            $history_data["timestamp"] = date("Y-m-d H:i:s");
+            if ($q->num_rows() > 0) {
+                $history_data=[];            
+                $history_data["mastid"] = $q->result()[0]->mastid;
+                $history_data["mast_name"] = $q->result()[0]->mast_name;
+                $history_data["location"] = $q->result()[0]->location;
+                $history_data["connection_via"] = $q->result()[0]->connection_via;
+                $history_data["connected_from"] = $q->result()[0]->connected_from;
+                $history_data["operation"] = "update";
+                $history_data["timestamp"] = date("Y-m-d H:i:s");
+                $this->db->where("mastid", $mast_data["mastid"]);
+                $this->db->update("tbl_masts_history", $history_data);
+                $this->db->where("mastid", $mast_data["mastid"]);
+                $this->db->update("tbl_masts", $mast_data); 
+            }
+            else{
+                $history_data=[];            
+                $history_data["mastid"] = $mast_data["mastid"];
+                $history_data["mast_name"] = $mast_data["mast_name"];
+                $history_data["location"] = $mast_data["location"];
+                $history_data["connection_via"] = $mast_data["connection_via"];
+                $history_data["connected_from"] = $mast_data["connected_from"];
+                $history_data["operation"] = "update";
+                $history_data["timestamp"] = date("Y-m-d H:i:s");
+                $this->db->where("mastid", $mast_data["mastid"]);
+                $this->db->insert("tbl_masts_history", $history_data);
+            }
             $this->db->where("mastid", $mast_data["mastid"]);
-            $this->db->update("tbl_masts_history", $history_data);
-            $this->db->where("mastid", $mast_data["mastid"]);
-            $this->db->update("tbl_masts", $mast_data);  
+            $this->db->update("tbl_masts", $mast_data); 
             return true;
         } else {
             return false;
@@ -74,15 +137,35 @@ class Devices_Model extends CI_Model
 
     public function deleteMast($mast_data)
     {
-        $history_data["operation"] = "delete";
-        $history_data["timestamp"] = date("Y-m-d H:i:s");
+        
         $this->db->where("mastid", $mast_data["mastid"]);
         $this->db->delete("tbl_masts");
-        
-        $this->db->select("operation", "timestamp");
         $this->db->where("mastid", $mast_data["mastid"]);
-        $this->db->update("tbl_masts_history", $history_data);
+        $this->db->delete("tbl_devices");
 
+        
+        
+        $this->db->select("operation", "timestamp", "mast_name");
+        $this->db->where("mastid", $mast_data["mastid"]);
+        $q = $this->db->get("tbl_masts_history");
+        if ($q->num_rows() > 0) {
+            $history_data=[]; 
+            $history_data["operation"] = "delete";
+            $history_data["timestamp"] = date("Y-m-d H:i:s");
+            $history_data["mast_name"] = $mast_data["mast_name"];
+            $this->db->update("tbl_masts_history", $history_data);
+        }else{
+            $history_data=[];            
+                $history_data["mastid"] = $mast_data["mastid"];
+                $history_data["mast_name"] = $mast_data["mast_name"];
+                $history_data["location"] = $mast_data["location"];
+                $history_data["connection_via"] = $mast_data["connection_via"];
+                $history_data["connected_from"] = $mast_data["connected_from"];
+                $history_data["operation"] = "delete";
+                $history_data["timestamp"] = date("Y-m-d H:i:s");
+                $this->db->where("mastid", $mast_data["mastid"]);
+                $this->db->insert("tbl_masts_history", $history_data);
+        }
         
         $query = $this->db->query(
             "SELECT MAX(mastid) AS max_id FROM tbl_masts"
@@ -105,11 +188,6 @@ class Devices_Model extends CI_Model
 
     public function getAllDevices()
     {
-        // $this->db->select(
-        //     "deviceid, device_name, mastid, ip_address, connection_status, wireless_mode, connected_from"
-        // );
-        // $query = $this->db->get("tbl_devices");
-        // return $query;
         return $this->db->get("tbl_devices");
     }
    
@@ -269,29 +347,30 @@ class Devices_Model extends CI_Model
     {
         $history_data["operation"] = "delete";
         $history_data["timestamp"] = date("Y-m-d H:i:s");
+        $history_data["device_name"] = $device_data["device_name"];
         $this->db->where("deviceid", $device_data["device_id"]);
         $this->db->delete("tbl_devices");
         
-        $this->db->select("operation", "timestamp");
+        $this->db->select("operation", "timestamp", "device_name");
         $this->db->where("deviceid", $device_data["device_id"]);
         $this->db->update("tbl_devices_history", $history_data);
-        // $query = $this->db->query(
-        //     "SELECT MAX(deviceid) AS max_id FROM tbl_devices"
-        // );
-        // $result = $query->row();
-        // $max_id = $result->max_id;
+        $query = $this->db->query(
+            "SELECT MAX(deviceid) AS max_id FROM tbl_devices"
+        );
+        $result = $query->row();
+        $max_id = $result->max_id;
 
-        // if ($this->db->error()["message"]) {
-        //     return false;
-        // } elseif (!$this->db->affected_rows()) {
-        //     return false;
-        // } else {
-        //     // reset auto increment
-        //     $this->db->query(
-        //         "ALTER TABLE tbl_devices AUTO_INCREMENT = " . ($max_id + 1)
-        //     );
+        if ($this->db->error()["message"]) {
+            return false;
+        } elseif (!$this->db->affected_rows()) {
+            return false;
+        } else {
+            // reset auto increment
+            $this->db->query(
+                "ALTER TABLE tbl_devices AUTO_INCREMENT = " . ($max_id + 1)
+            );
             return true;
-        // }
+        }
     }
 
     public function getConnectedFrom($connectedfrom)

@@ -223,6 +223,3 @@ function showResultSweetAlert(title, url) {
 
 </script>
 
-</body>
-
-</html>

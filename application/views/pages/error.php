@@ -42,7 +42,7 @@
         <a class="btn" href="<?php echo base_url("dashboard"); ?>">Back to home</a>
         <img src="<?php echo base_url("assets/img/not-found.svg"); ?>" class="img-fluid py-5" alt="Page Not Found">
         <div class="credits">
-    Designed by <a href="https://bootstrapmade.com/">Pascal Muchiri</a>
+    Designed by Pascal Muchiri
   </div>
   <!-- <div class="copyright">
     &copy; <span>Codezuka Developers</span>. All Rights Reserved

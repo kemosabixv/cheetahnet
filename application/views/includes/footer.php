@@ -64,30 +64,32 @@ $(document).ready(function () {
 			}
 		});
 	});
-
-	// Update monitor status function
-	function updateMonitorStatus() {
-		$.ajax({
-			url: "<?php echo base_url('monitor-status'); ?>",
-			method: "GET",
-			success: function (response) {
-				// console.log(response);
-				if (response === "true") {
-					$('#monitor-status').html('<span class="badge bg-success">Running</span>');
-				} else if (response === "false") {
-					$('#monitor-status').html('<span class="badge bg-danger">Not Running</span>');
-				} else {
-					$('#monitor-status').html('<span class="badge bg-danger">Error</span>');
+	
+		// Update monitor status function
+		function updateMonitorStatus() {
+			$.ajax({
+				url: "<?php echo base_url('monitor-status'); ?>",
+				method: "GET",
+				success: function (response) {
+					// console.log(response);
+					if (response === "true") {
+						$('#monitor-status').html('<span class="badge bg-success">Running</span>');
+					} else if (response === "false") {
+						$('#monitor-status').html('<span class="badge bg-danger">Not Running</span>');
+					} else {
+						$('#monitor-status').html('<span class="badge bg-danger">Error</span>');
+					}
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					console.error(textStatus, errorThrown);
 				}
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-				console.error(textStatus, errorThrown);
-			}
-		});
-	}
+			});
+		}
+	
 
 
-	$.ajax({
+	setInterval(() => {
+		$.ajax({
 		url: "<?php echo base_url('getNotificationList'); ?>",
 		method: "GET",
 		success: function (response) {
@@ -129,6 +131,10 @@ $(document).ready(function () {
 			console.error(textStatus, errorThrown);
 		}
 	});
+	}, 2000);
+
+
+
 
 	// Function to calculate the time ago from the given date
 	function calculateTimeAgo(date) {
@@ -154,9 +160,11 @@ $(document).ready(function () {
 
 		return timeAgo;
 	}
+	updateMonitorStatus();
 
-
+	setInterval(() => {
 	updateMonitorStatus(); // Call the function to update the monitor status initially
+	}, 2000);
 });
 
 function showLoadingSweetAlert(title) {

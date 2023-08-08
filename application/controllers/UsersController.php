@@ -6,12 +6,19 @@ class UsersController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        if ($this->session->userdata("logged_in") !== true ) {
+            redirect("welcome");
+        }
+        
         $this->load->model("Users_Model", "users_model");
         $this->load->model("Login_Model", "login_model");
     }
 
     public function index()
-    {
+    {   
+        if ($this->session->userdata("level") !== "1") {
+            redirect("dashboard");
+        }
         $all_roles = $this->users_model->get_all_roles();
         $pagedata["all_roles"] = $all_roles;
         $page = "Users";

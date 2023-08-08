@@ -2,10 +2,10 @@
 
 $config = array(
     'protocol' => 'smtp', // 'mail', 'sendmail', or 'smtp'
-    'smtp_host' => 'mail.codezuka.com', 
+    'smtp_host' => 'mail.squarefoot.co.ke', 
     'smtp_port' => 26,
-    'smtp_user' => 'sync@codezuka.com',
-    'smtp_pass' => '0@Ldiw)+rsN0',
+    'smtp_user' => 'p.muchiri@squarefoot.co.ke',
+    'smtp_pass' => 'Watt1234!@#$',
     'smtp_crypto' => '', //can be 'ssl' or 'tls' for example
     'mailtype' => 'text', //plaintext 'text' mails or 'html'
     'smtp_timeout' => '4', //in seconds

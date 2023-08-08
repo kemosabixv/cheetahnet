@@ -35,12 +35,15 @@
               RadioTxPower = data[0].RadioTxPower;
               RadioAntenna = data[0].RadioAntenna;
               ChannelCode = data[0].ChannelCode;
+              lan = data[0].lan;
               console.log("SSID: " + ssid);
               console.log("Channel Frequency: " + Frequency);
               console.log("Channel Width: " + ChanWidth);
               console.log("TX Power: " + RadioTxPower);
               console.log("Channel Code: " + ChannelCode);
               console.log("Radio Antenna: " + RadioAntenna);
+              console.log("lan: " + lan);
+
 
               $('#ssid').text(ssid);
               $('#channelFrequency').text(Frequency);
@@ -48,41 +51,47 @@
               $('#txPower').text(RadioTxPower);
               $('#ChannelCode').text(ChannelCode);
               $('#RadioAntenna').text(RadioAntenna);
+              $('#lan').text(lan);
+
+
+
             }else{
-              console.log("success");
             $('#ssid').text("-");
             $('#channelFrequency').text("-");
             $('#channelWidth').text("-");
             $('#txPower').text("-");
             $('#ChannelCode').text("-");
             $('#RadioAntenna').text("-");
-            $
+            $('#lan').text("-");
             }
           }
         });
 
 
     // AJAX request for connection status
+    setInterval(() => {
     $.ajax({
           url: "<?php echo base_url('getconnectionstatus')?>/" + ip,
           type: 'POST',
           success: function (data) {
             console.log(data);
             var connectionStatus = data.connection_status;
-            var $connectionStatusElement = $('<li class="nav-item" style="margin-left: 3px;"></li>');
-            var $badgeElement = $('<span class="badge rounded-pill"></span>');
-            if (connectionStatus === 'online') {
-              $badgeElement.addClass('bg-success');
-              $badgeElement.append('<h7>Online</h7>');
+            $('#connectionStatusBadge').empty();
+            $('#connectionStatusBadge').removeClass('bg-success');
+            $('#connectionStatusBadge').removeClass('bg-danger');
+            
+            if (connectionStatus === 'Online') {
+              $('#connectionStatusBadge').addClass('bg-success');
+              $('#connectionStatusBadge').append('<h7>Online</h7>');
             }
             else {
-              $badgeElement.addClass('bg-danger');
-              $badgeElement.append('<h7>Offline</h7>');
+              $('#connectionStatusBadge').addClass('bg-danger');
+              $('#connectionStatusBadge').append('<h7>Offline</h7>');
             }
-            $connectionStatusElement.append($badgeElement);
-            $('.nav.nav-pills.card-header-pills').append($connectionStatusElement);
+            
           }
         });
+      }, interval = 5000);
     
    // AJAX request for snmpgetrecurringdevicedata data 
 
@@ -157,101 +166,7 @@
   
   
   
-  
-  //TODO:sort station and throughput based on snmp walk response json array
-  
-    //   // Assuming throughputData is the variable containing the data from element0
-  //   // WLAN0 Chart
-  //   new Chart(document.querySelector('#wlan0Chart'), {
-  //     type: 'line',
-  //     data: {
-  //       labels: [],
-  //       datasets: [
-  //         {
-  //           label: 'WLAN0 RX',
-  //           data: throughputData['throughput WLAN0 RX'],
-  //           fill: false,
-  //           borderColor: 'rgb(75, 192, 192)',
-  //           tension: 0.1
-  //     },
-  //         {
-  //           label: 'WLAN0 TX',
-  //           data: throughputData['throughput WLAN0 TX'],
-  //           fill: false,
-  //           borderColor: 'rgb(192, 75, 192)',
-  //           tension: 0.1
-  //     }
-  //   ]
-  //     },
-  //     options: {
-  //       scales: {
-  //         y: {
-  //           beginAtZero: true,
-  //           suggestedMax: Math.max(...throughputData['throughput WLAN0 RX'], ...throughputData['throughput WLAN0 TX']),
-  //           ticks: {
-  //             callback: function (value, index, values) {
-  //               return formatDataSize(value); // Call a function to format the data size dynamically
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
-  //   // LAN0 Chart
-  //   new Chart(document.querySelector('#lan0Chart'), {
-  //     type: 'line',
-  //     data: {
-  //       labels: [],
-  //       datasets: [
-  //         {
-  //           label: 'LAN0 RX',
-  //           data: throughputData['throughput LAN0 RX'],
-  //           fill: false,
-  //           borderColor: 'rgb(75, 192, 75)',
-  //           tension: 0.1
-  //     },
-  //         {
-  //           label: 'LAN0 TX',
-  //           data: throughputData['throughput LAN0 TX'],
-  //           fill: false,
-  //           borderColor: 'rgb(192, 75, 75)',
-  //           tension: 0.1
-  //     }
-  //   ]
-  //     },
-  //     options: {
-  //       scales: {
-  //         y: {
-  //           beginAtZero: true,
-  //           suggestedMax: Math.max(...throughputData['throughput LAN0 RX'], ...throughputData['throughput LAN0 TX']),
-  //           ticks: {
-  //             callback: function (value, index, values) {
-  //               return formatDataSize(value); // Call a function to format the data size dynamically
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
-
-  //  });
-
-
-  //   // Function to format data size dynamically
-  //   function formatDataSize(value) {
-  //     if (value >= 1e9) {
-  //       return (value / 1e9).toFixed(2) + ' Gbps';
-  //     }
-  //     else if (value >= 1e6) {
-  //       return (value / 1e6).toFixed(2) + ' Mbps';
-  //     }
-  //     else if (value >= 1e3) {
-  //       return (value / 1e3).toFixed(2) + ' Kbps';
-  //     }
-  //     else {
-  //       return value.toFixed(2) + ' Bps';
-  //     }
-  //  }
+ 
 
   });
 

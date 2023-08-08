@@ -6,12 +6,11 @@ class DashboardController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        // if ($this->session->userdata("logged_in") !== true) {
-        //     redirect("welcome");
-        // }
+        if ($this->session->userdata("logged_in") !== true) {
+            redirect("welcome");
+        }
         $this->load->model("Devices_Model", "devices_model");
         $this->load->model("Dashboard_Model", "dashboard_model");
-        $this->load->library("africastalking");
     }
     public function index()
     {

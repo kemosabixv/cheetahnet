@@ -1,0 +1,13 @@
+2023-08-08 23:33:32,572 DEBUG - Starting WinSW in console mode
+2023-08-08 23:33:35,847 DEBUG - Starting WinSW in console mode
+2023-08-08 23:33:35,921 INFO  - Installing service 'cheetahnet-api (cheetahnet-api)'...
+2023-08-08 23:33:35,969 INFO  - Service 'cheetahnet-api (cheetahnet-api)' was installed successfully.
+2023-08-08 23:34:55,567 DEBUG - Starting WinSW in service mode
+2023-08-08 23:34:55,631 INFO  - Starting C:\Program Files\Java\jdk-20\bin\java.exe -jar cheetahnet-api.jar
+2023-08-08 23:34:55,670 INFO  - Started process 29652
+2023-08-08 23:34:55,691 DEBUG - Forwarding logs of the process System.Diagnostics.Process (java) to WinSW.DefaultLogAppender
+2023-08-09 01:03:17,344 INFO  - Stopping cheetahnet-api
+2023-08-09 01:03:17,356 DEBUG - ProcessKill 29652
+2023-08-09 01:03:17,389 DEBUG - Stopping process 29652...
+2023-08-09 01:03:18,016 DEBUG - Process 29652 canceled with code 130.
+2023-08-09 01:03:18,039 INFO  - Finished cheetahnet-api

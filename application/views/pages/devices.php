@@ -10,10 +10,22 @@
   </nav>
 </div>
 <!-- End Page Title -->
+<div class="card col-4">
+  <div class="card-body">
+    <h5 class="card-title">Network Interface Details</h5>
+    <!-- List group with active and disabled items -->
+    <ul class="list-group list-group-flush"> <?php foreach($interfaces as $each) { ?> <?php if ($each->id == 1) { ?> <li class="list-group-item">Interface Name: <?php echo $each->interfacedisplayname; ?> </li>
+      <li class="list-group-item">IP Address: <?php echo $each->ipaddress; ?> </li>
+      <li class="list-group-item">Subnet: <?php echo $each->subnet; ?> </li> <?php } ?> <?php } ?>
+    </ul>
+    <!-- End Clean list group -->
+  </div>
+</div>
 <div class="row">
   <div class="col-md-6">
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button id="update_radiomode_connectedfrom" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Update all Radio Mode and Connected From fields" type="button">Update</button>
+    <button id="select_int" class="btn btn-primary" type="button">Select Interface</button>  
+    <button id="update_radiomode_connectedfrom" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Update all Radio Mode and Connected From fields" type="button">Update</button>
     </div>
   </div>
   <div class="col-md-6">
@@ -197,5 +209,33 @@
       </div>
       <!-- End Scrolling Modal-->
 
+    
+
     </div>
+
+
+    <div class="modal fade" id="InterfaceModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="InterfaceModalTitle">Add Interface Name</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- No Labels Form -->
+            <form class="row g-3" id="InterfaceForm" method="POST" action="javascript:void(0)">
+              <div class="col-12">
+                <label for="interface_name" class="form-label">Interface Name</label>
+                <input type="text" name="interface_name" id="interface_name" class="form-control" placeholder="Realtek PCIe GbE Family Controller"> `
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>

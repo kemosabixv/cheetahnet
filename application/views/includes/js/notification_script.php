@@ -47,7 +47,9 @@ $(document).ready(function () {
 			}
 
 		],
-
+		order: [
+			[5, 'desc']
+		],
 		"rowCallback": function (row, data, index) {
 			$(row).addClass("bg-primary-light"); // Add CSS class for all rows
 		}

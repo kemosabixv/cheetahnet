@@ -6,11 +6,10 @@ class DevicesController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        // if ($this->session->userdata("logged_in") !== true) {
-        //     redirect("welcome");
-        // }
+        if ($this->session->userdata("logged_in") !== true) {
+            redirect("welcome");
+        }
         $this->load->model("Devices_Model", "devices_model");
-        $this->load->library("africastalking");
     }
 
     public function masts()
@@ -27,7 +26,10 @@ class DevicesController extends CI_Controller
     }
 
     public function devices()
-    {
+    {    
+        $interfaces = $this->devices_model
+        ->get_interface();
+        $pagedata["interfaces"] = $interfaces;
         $pagedata["all_masts"] = $this->devices_model->getAllMasts();
         $pagedata["all_devices"] = $this->devices_model->get_all_ap();
         $page = "devices";
@@ -48,6 +50,32 @@ class DevicesController extends CI_Controller
         $this->load->view("pages/" . $page);
         $this->load->view("includes/footer");
         $this->load->view("includes/js/mastdevices_script");
+    }
+
+    public function addinterface()
+    {
+        $interface_data["id"] = 1;
+        $interface_data["interfacedisplayname"] = $this->input->post(
+            "interface_name",
+            true
+        );
+
+        // Call the model to insert the interface data
+        $result = $this->devices_model->insertInterfaceData($interface_data);
+
+        // Prepare the response data
+        $response = [];
+        if ($result) {
+            $response["error"] = 0;
+            $response["message"] = "Interface data inserted successfully";
+        } else {
+            $response["error"] = 1;
+            $response["message"] = "Failed to insert interface data";
+        }
+
+        // Send the response as JSON
+        header("Content-Type: application/json");
+        echo json_encode($response);
     }
 
     public function getAllMasts()
@@ -153,9 +181,10 @@ class DevicesController extends CI_Controller
     public function deleteMast()
     {
         $mast_data["mastid"] = $this->input->post("mastid", true);
+        $mast_data["mast_name"]= $this->getMastName($mast_data["mastid"]);
 
-        $deviceData = $this->devices_model->deleteMast($mast_data);
-        if ($deviceData) {
+        $mast_data = $this->devices_model->deleteMast($mast_data);
+        if ($mast_data) {
             $response = [
                 "error" => 0,
                 "message" => "Mast Deleted Succcessfully!!",
@@ -353,6 +382,8 @@ class DevicesController extends CI_Controller
     public function deleteDevice()
     {
         $device_data["device_id"] = $this->input->post("device_id", true);
+        $mast_data["device_name"]= $this->getDeviceName($device_data["device_id"]);
+
 
         $device_data = $this->devices_model->deleteDevice($device_data);
         if ($device_data) {

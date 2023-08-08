@@ -7,7 +7,6 @@ class AuthController extends CI_Controller
     {
         parent::__construct();
         $this->load->model("login_model", "loginModel");
-        $this->load->library("cache");
     }
 
     public function index()
@@ -29,7 +28,7 @@ class AuthController extends CI_Controller
             $name = $data["user_name"];
             $full_names = $data["full_names"];
             $email = $data["user_email"];
-            $level = $data["user_level"];
+        $level = $data["user_level"];
             $active = $data["active"];
             $isFirsTimeLogin = $data["isFirstTimeLogin"];
             $uphone = $data["phonenumber"];
@@ -43,7 +42,7 @@ class AuthController extends CI_Controller
                 "isFirstTimeLogin" => $isFirsTimeLogin,
                 "uphone" => $uphone,
                 "logged_in" => true,
-                "dashboard_filter" => [],
+                // "dashboard_filter" => [],
             ];
             $this->session->set_userdata($sesdata);
             $response = [

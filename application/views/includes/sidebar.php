@@ -9,7 +9,8 @@
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
-      </li><!-- End F.A.Q Page Nav -->
+      </li>
+       <!-- End Dashboard Nav -->
 
       <?php if($this->session->userdata('level')==='1'):?>
       <li class="nav-item">
@@ -19,7 +20,7 @@
         </a>
       </li>
      <?php endif;?>
-     <!-- End Contact Page Nav -->
+     <!-- End Users Nav -->
         
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="<?php echo base_url("masts"); ?>" aria-expanded="false">
@@ -33,7 +34,7 @@
           </li>
           <li>
             <a href="<?php echo base_url("mastdevices"); ?>">
-              <i class="bi bi-circle"></i><span>Mast Groups</span>
+              <i class="bi bi-circle"></i><span>Device Groups</span>
             </a>
           </li>
         </ul>
@@ -58,16 +59,6 @@
         </a>
       </li><!-- End Devices Page Nav -->
 
-      
-
-      
-
-     <li class="nav-item">
-        <a class="nav-link collapsed" href="<?php echo base_url("discovery"); ?>">
-          <i class="bi bi-rainbow"></i>
-          <span>Discovery</span>
-        </a>
-      </li><!-- End Discover Page Nav -->
 
       <li class="nav-item">
       <a class="nav-link collapsed" href="#">

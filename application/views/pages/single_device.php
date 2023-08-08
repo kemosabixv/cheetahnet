@@ -3,10 +3,10 @@
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="home">Home</a>
+        <a href=<?php echo base_url("home")?>">Home</a>
       </li>
       <li class="breadcrumb-item">
-        <a href="devices">Devices</a>
+        <a href="<?php echo base_url("devices")?>">Devices</a>; 
       </li>
       <li class="breadcrumb-item active">
         <a href="#">Device</a>
@@ -43,6 +43,7 @@
               </div>
             </li>
             <li class="list-group-item">Antenna: <strong><span id="RadioAntenna"></span></strong></li>
+            <li class="list-group-item">LAN: <strong><span id="lan"></span></strong></li>
           </ul>
           <!-- End Clean list group -->
         </div>
@@ -109,57 +110,6 @@
             </ul>
             <!-- End Clean list group -->
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Monitor</h5>
-          <!-- Bordered Tabs Justified -->
-          <ul class="nav nav-tabs nav-tabs-bordered d-flex" id="borderedTabJustified" role="tablist">
-            <li class="nav-item flex-fill" role="presentation">
-              <button class="nav-link w-100 active" id="throughput_tab" data-bs-toggle="tab" data-bs-target="#throughput_charts" type="button" role="tab" aria-controls="throughput_charts" aria-selected="true">Throughput</button>
-            </li>
-            <?php if($wireless_mode==='AP'):?>
-            <li class="nav-item flex-fill" role="presentation">
-              <button class="nav-link w-100" id="stations_tab" data-bs-toggle="tab" data-bs-target="#stations_table" type="button" role="tab" aria-controls="stations_table" aria-selected="false">Stations</button>
-            </li>
-            <?php endif;?>
-          </ul>
-          <div class="tab-content pt-2" id="borderedTabJustifiedContent">
-            <div class="tab-pane fade show active" id="throughput_charts" role="tabpanel" aria-labelledby="throughput_tab">
-              <div class="row">
-                <div class="col-md-6">
-                  <canvas id="wlan0Chart" style="max-height: 400px; display: block; box-sizing: border-box; height: 190px; width: 100%;" width="571" height="285"></canvas>
-                </div>
-                <div class="col-md-6">
-                  <canvas id="lan0Chart" style="max-height: 400px; display: block; box-sizing: border-box; height: 190px; width: 100%;" width="571" height="285"></canvas>
-                </div>
-              </div>
-            </div>
-            <?php if($wireless_mode==='AP'):?>
-            <div class="tab-pane fade" id="stations_table" role="tabpanel" aria-labelledby="stations_tab">
-              <div class="row">
-                <div class="col-md-12">
-                  <table class="table table-dark table-responsive" id="stations_datatable">
-                      <thead>
-                        <tr>
-                          <th scope="col">Device Name</th>
-                          <th scope="col">IP</th>
-                          <th scope="col">Signal</th>
-                          <th scope="col">Noise Floor</th>
-                          <th scope="col">Connection Time</th>
-                          <th scope="col">CCQ</th>
-                        </tr>
-                      </thead>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <?php endif;?>
-          <!-- End Bordered Tabs Justified -->
         </div>
       </div>
     </div>

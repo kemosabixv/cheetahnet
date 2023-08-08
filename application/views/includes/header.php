@@ -34,10 +34,4 @@
   <link rel="stylesheet" href="<?php echo base_url('assets/css/next.css'); ?>">
   <script type="text/javascript" src="<?php echo base_url('assets/js/next.js'); ?>"></script>
 
-  <!-- =======================================================
-  * Template Name: NiceAdmin - v2.5.0
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
