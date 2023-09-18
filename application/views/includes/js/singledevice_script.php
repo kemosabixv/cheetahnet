@@ -111,14 +111,17 @@
               stationcount = data[0].StationCount;
               signal = data[0].signal;
               airmaxcapacity = data[0].AirMaxCapacity;
+              noiseFloor = data[0].NoiseFloor;
               console.log("CCQ: " + ccq);
               console.log("SysUptime: " + uptime);
               console.log("AirMaxQuality: " + airmaxquality);
               console.log("StationCount: " + stationcount);
               console.log("Signal: " + signal);
               console.log("AirMaxCapacity: " + airmaxcapacity);
+              console.log("NoiseFloor: " + noiseFloor);
               
               $('#signal').text(signal);
+              $('#noiseFloor').text(noiseFloor);
               $('#ccq').text(ccq);
               $('#uptime').text(uptime);
               $('#connections').text(stationcount);
@@ -131,6 +134,7 @@
             }else{
               console.log("no response");
               $('#signal').text("-");
+              $('#noiseFloor').text("-");
               $('#ccq').text("-");
               $('#uptime').text("-");
               $('#connections').text("-");

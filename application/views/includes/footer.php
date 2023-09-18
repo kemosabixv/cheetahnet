@@ -33,7 +33,7 @@ $(document).ready(function () {
 	$('#monitor-on').click(function () {
 		showLoadingSweetAlert("Turning Monitor On...");
 		$.ajax({
-			url: "start-ping",
+			url: "<?php echo base_url('start-ping'); ?>",
 			type: "GET",
 			success: function (response) {
 				console.log(response);
@@ -51,7 +51,7 @@ $(document).ready(function () {
 	$('#monitor-off').click(function () {
 		showLoadingSweetAlert("Turning Monitor Off...");
 		$.ajax({
-			url: "stop-ping",
+			url: "<?php echo base_url('stop-ping'); ?>",
 			type: "GET",
 			success: function (response) {
 				console.log(response);

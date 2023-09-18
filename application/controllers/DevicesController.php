@@ -382,7 +382,7 @@ class DevicesController extends CI_Controller
     public function deleteDevice()
     {
         $device_data["device_id"] = $this->input->post("device_id", true);
-        $mast_data["device_name"]= $this->getDeviceName($device_data["device_id"]);
+        $device_data["device_name"]= $this->getDeviceName($device_data["device_id"]);
 
 
         $device_data = $this->devices_model->deleteDevice($device_data);

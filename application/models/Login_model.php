@@ -33,7 +33,8 @@ class Login_model extends CI_Model
 
          $this->db->where("user_name", $user_data["user_name"]);
          $q = $this->db->get("tbl_users");
-
+         
+        //  var_dump($q->num_rows());
 
          if ($q->num_rows() > 0) {
 
